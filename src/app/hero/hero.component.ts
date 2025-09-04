@@ -24,14 +24,42 @@ export const HERO_COLORS = {
   warmGreen: '#80b48c'    // Warm green (accent/check)
 } as const;
 
-// Animation timeline sabitleri
+// Animation timeline sabitleri - Kağıt animasyonları yavaşlatıldı
 export const ANIMATION_TIMELINE = {
-  dollyAndOrbit: { start: 0.00, end: 0.20 },    // Dolly-in + mikro orbit
-  sweepTransition: { start: 0.20, end: 0.55 },  // Tarama geçişi
-  paperAlignment: { start: 0.55, end: 0.80 },   // Kağıt hizalama
-  circleAndCheck: { start: 0.80, end: 0.92 },   // Çember + check
-  stabilize: { start: 0.92, end: 1.00 }         // Sabitlenme
+  dollyAndOrbit: { start: 0.00, end: 0.15 },    // Dolly-in + mikro orbit (kısaltıldı)
+  sweepTransition: { start: 0.15, end: 0.65 },  // Tarama geçişi (YAVAŞLATILDI: 0.35 → 0.50 süre)
+  paperAlignment: { start: 0.65, end: 0.90 },   // Kağıt hizalama (YAVAŞLATILDI: 0.25 → 0.25 süre)
+  circleAndCheck: { start: 0.90, end: 0.97 },   // Çember + check
+  stabilize: { start: 0.97, end: 1.00 }         // Sabitlenme
 } as const;
+
+// Hikaye metinleri - scroll ile akan dinamik başlıklar
+export const STORY_TEXTS = [
+  {
+    text: "Onlarca kağıdı okumak çok yorucu...",
+    start: 0.00,
+    end: 0.20,
+    type: 'problem' as const
+  },
+  {
+    text: "Öğretmen her öğrenciye yetişemiyor.",
+    start: 0.15,
+    end: 0.65,
+    type: 'challenge' as const
+  },
+  {
+    text: "Değerlendirme artık çok kolay!",
+    start: 0.65,
+    end: 0.90,
+    type: 'solution' as const
+  },
+  {
+    text: "Öğrenci öğreniyor, öğretmen rahatlıyor!",
+    start: 0.90,
+    end: 1.00,
+    type: 'success' as const
+  }
+] as const;
 
 interface Paper {
   x: number;
@@ -244,11 +272,11 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
         width: 120 + Math.random() * 40,  // A4 proportions scaled
         height: 160 + Math.random() * 50,
         x: 0, y: 0, rotation: 0,
-        originalX: canvasWidth * 0.4 + Math.random() * canvasWidth * 0.3,
-        originalY: canvasHeight * 0.3 + Math.random() * canvasHeight * 0.4,
+        originalX: canvasWidth * 0.55 + Math.random() * canvasWidth * 0.25, // Dağınık kağıtlar daha sağda (0.45 -> 0.55)
+        originalY: canvasHeight * 0.45 + Math.random() * canvasHeight * 0.3, // Çok az yukarı (0.5 -> 0.45)
         originalRotation: (Math.random() - 0.5) * 30, // -15 to +15 degrees
-        finalX: canvasWidth * 0.65 + i * 2, // Stack position
-        finalY: canvasHeight * 0.4 + i * 1,
+        finalX: canvasWidth * 0.65 + i * 2, // Toplanmış hali biraz sola (0.7 -> 0.65)
+        finalY: canvasHeight * 0.55 + i * 1, // Çok az yukarı (0.6 -> 0.55)
         finalRotation: i * 0.5 // Slight offset in stack
       };
 
@@ -361,7 +389,8 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
       if (progress >= timeline.paperAlignment.start && progress <= timeline.paperAlignment.end) {
         const alignProgress = (progress - timeline.paperAlignment.start) / 
                              (timeline.paperAlignment.end - timeline.paperAlignment.start);
-        const easedProgress = this.scrollService.easing.easeOutQuart(alignProgress);
+        // Daha yumuşak geçiş için easeInOutCubic kullan (easeOutQuart yerine)
+        const easedProgress = this.scrollService.easing.easeInOutCubic(alignProgress);
         
         paperX = this.scrollService.interpolate(paper.originalX, paper.finalX, easedProgress);
         paperY = this.scrollService.interpolate(paper.originalY, paper.finalY, easedProgress);
@@ -403,8 +432,8 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
       this.ctx!.lineWidth = 1;
       this.ctx!.strokeRect(-paper.width / 2, -paper.height / 2, paper.width, paper.height);
 
-      // Grafit çizgiler (okunmaz)
-      this.drawGraphiteLines(paper);
+      // Grafit çizgiler (okunmaz) - progress ile kademeli görünüm
+      this.drawGraphiteLines(paper, progress);
 
       this.ctx!.restore();
     });
@@ -419,33 +448,190 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
       this.drawCircleAndCheck(progress);
     }
 
+    // Akan hikaye metinleri (kağıtların üstünde)
+    this.drawStoryText(progress, canvasWidth, canvasHeight);
+
     this.ctx.restore();
   }
 
-  private drawGraphiteLines(paper: Paper): void {
+  private drawGraphiteLines(paper: Paper, progress: number): void {
     if (!this.ctx) return;
+
+    // Yazıların görünürlük hesaplama - başlangıçta var, sonra animasyonlu değişim
+    const timeline = ANIMATION_TIMELINE;
+    let textOpacity = 0.5; // Başlangıçta %50 opacity ile görünür
+    
+    // Dolly orbit aşamasında (0.00-0.15) sabit görünürlük
+    if (progress <= timeline.dollyAndOrbit.end) {
+      textOpacity = 0.5;
+    }
+    // Sweep transition'da yazılar biraz soluk (0.15-0.65 arası)
+    else if (progress >= timeline.sweepTransition.start && progress <= timeline.sweepTransition.end) {
+      const sweepProgress = (progress - timeline.sweepTransition.start) / 
+                           (timeline.sweepTransition.end - timeline.sweepTransition.start);
+      textOpacity = 0.5 + (sweepProgress * 0.1); // %50'den %60'a çık (yavaşça)
+    }
+    // Paper alignment'ta yazılar daha net görünür (0.65-0.90 arası)
+    else if (progress >= timeline.paperAlignment.start) {
+      const alignProgress = (progress - timeline.paperAlignment.start) / 
+                           (timeline.paperAlignment.end - timeline.paperAlignment.start);
+      textOpacity = 0.6 + (alignProgress * 0.1); // %60'tan %70'e çık
+    }
 
     this.ctx.save();
     
-    // Grafit rengi (sage/gray karışımı)
+    // Grafit rengi (sage/gray karışımı) - animasyonlu opacity
     this.ctx.strokeStyle = this.colors.coolGray;
-    this.ctx.globalAlpha = 0.7;
+    this.ctx.globalAlpha = textOpacity;
     this.ctx.lineWidth = 1;
 
-    // Rastgele çizgiler
+    // Rastgele çizgiler - kağıt sınırları içinde kalacak şekilde
     const lineCount = 3 + Math.floor(Math.random() * 3);
+    
+    // Kağıt sınırları (kenar boşlukları ile)
+    const leftBound = -paper.width / 2 + 15;   // Sol kenar + 15px boşluk
+    const rightBound = paper.width / 2 - 15;   // Sağ kenar - 15px boşluk
+    const topBound = -paper.height / 2 + 15;   // Üst kenar + 15px boşluk
+    const bottomBound = paper.height / 2 - 15; // Alt kenar - 15px boşluk
+    
     for (let i = 0; i < lineCount; i++) {
-      const startX = -paper.width / 2 + 10 + Math.random() * (paper.width - 40);
-      const startY = -paper.height / 2 + 10 + i * 25;
-      const endX = startX + 30 + Math.random() * 50;
+      // Çizgi için güvenli alan hesaplama
+      const lineY = topBound + (i * 25);
       
+      // Y pozisyonu kağıt sınırları içinde mi kontrol et
+      if (lineY > bottomBound) break; // Kağıt sınırını aştıysa dur
+      
+      // X pozisyonları kağıt içinde kalacak şekilde hesapla
+      const availableWidth = rightBound - leftBound;
+      const minLineLength = 30;
+      const maxLineLength = Math.min(80, availableWidth - 20); // Max uzunluk da sınırla
+      
+      const startX = leftBound + Math.random() * (availableWidth - maxLineLength);
+      const lineLength = minLineLength + Math.random() * (maxLineLength - minLineLength);
+      const endX = startX + lineLength;
+      
+      // Çizgiyi çiz (şimdi kesin olarak kağıt içinde)
       this.ctx.beginPath();
-      this.ctx.moveTo(startX, startY);
-      this.ctx.lineTo(endX, startY);
+      this.ctx.moveTo(startX, lineY);
+      this.ctx.lineTo(endX, lineY);
       this.ctx.stroke();
     }
 
     this.ctx.restore();
+  }
+
+  private drawStoryText(progress: number, canvasWidth: number, canvasHeight: number): void {
+    if (!this.ctx) return;
+
+    // Aktif metinleri bul (progress'e göre) - İlk yazı her zaman dahil
+    const activeTexts = STORY_TEXTS.filter((story, index) => {
+      // İlk yazıyı her zaman göster (progress ne olursa olsun)
+      if (index === 0) return true;
+      // Diğerleri için normal filtering
+      return progress >= story.start && progress <= story.end;
+    });
+
+    if (activeTexts.length === 0) return;
+
+    this.ctx.save();
+
+    // Her aktif metin için
+    activeTexts.forEach((story, index) => {
+      // Orijinal story index'ini bul
+      const originalIndex = STORY_TEXTS.findIndex(s => s.text === story.text);
+      
+      // Metin opacity hesaplama (fade in/out efekti)
+      const textProgress = (progress - story.start) / (story.end - story.start);
+      let opacity = 1;
+      
+      // İlk yazı için özel durum - her zaman görünür (progress=0'da bile)
+      if (originalIndex === 0) {
+        if (progress <= story.end) {
+          opacity = 1; // İlk yazı için sabit opacity
+        } else {
+          opacity = Math.max(0, 1 - ((progress - story.end) / 0.1)); // Yavaş fade out
+        }
+      }
+      // Diğer yazılar için normal fade in/out
+      else {
+        // Fade in (ilk %20'de)
+        if (textProgress < 0.2) {
+          opacity = textProgress / 0.2;
+        }
+        // Fade out (son %20'de) 
+        else if (textProgress > 0.8) {
+          opacity = (1 - textProgress) / 0.2;
+        }
+      }
+
+      // Tüm metinler için siyah bold stil
+      const textColor: string = '#000000'; // Siyah
+      const fontSize = 32; // Daha büyük font (24 -> 32)
+      const fontWeight = '700'; // Bold
+
+      // Font ayarları (null check ile güvenli)
+      if (!this.ctx) return;
+      
+      this.ctx.font = `italic ${fontWeight} ${fontSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+      this.ctx.fillStyle = textColor;
+      this.ctx.globalAlpha = opacity;
+      this.ctx.textAlign = 'center'; // Center align - kağıtları ortalayacak
+      this.ctx.textBaseline = 'top';
+
+      // Kağıtların merkez pozisyonunu hesapla (progress'e göre)
+      let paperCenterX;
+      if (progress < 0.65) {
+        // Dağınık haldeyken: originalX aralığının merkezi (%55-80 arası = %67.5)
+        paperCenterX = canvasWidth * 0.675;
+      } else {
+        // Toplanmış haldeyken: finalX pozisyonu (%65)
+        paperCenterX = canvasWidth * 0.65;
+      }
+
+      // Metin pozisyonu (kağıtların merkezine göre)
+      const textX = paperCenterX; // Yazıyı kağıt merkezine hizala
+      const baseY = canvasHeight * 0.08; // Daha da yukarı taşındı (%15 -> %8)
+      const textY = baseY + (index * 40); // Tek satır için normal mesafe (60 -> 40)
+
+      // Metin gölgesi (okunabilirlik için)
+      this.ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+      this.ctx.shadowOffsetX = 0;
+      this.ctx.shadowOffsetY = 1;
+      this.ctx.shadowBlur = 3;
+
+      // Tek satırda göster - yazılar artık kısa
+      this.ctx.fillText(story.text, textX, textY);
+    });
+
+    this.ctx.restore();
+  }
+
+  private drawWrappedText(text: string, x: number, y: number, maxWidth: number, lineHeight: number): void {
+    if (!this.ctx) return;
+
+    const words = text.split(' ');
+    let line = '';
+    let currentY = y;
+
+    for (let i = 0; i < words.length; i++) {
+      const testLine = line + words[i] + ' ';
+      const metrics = this.ctx.measureText(testLine);
+      const testWidth = metrics.width;
+
+      if (testWidth > maxWidth && i > 0) {
+        // Satır çok uzun, mevcut satırı çiz ve yeni satıra geç
+        this.ctx.fillText(line.trim(), x, currentY);
+        line = words[i] + ' ';
+        currentY += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    
+    // Son satırı çiz
+    if (line.trim().length > 0) {
+      this.ctx.fillText(line.trim(), x, currentY);
+    }
   }
 
   private drawSweepGradient(sweepX: number): void {
@@ -474,8 +660,8 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
     const canvasWidth = this.canvas.width / this.devicePixelRatio;
     const canvasHeight = this.canvas.height / this.devicePixelRatio;
     
-    const centerX = canvasWidth * 0.65;
-    const centerY = canvasHeight * 0.3;
+    const centerX = canvasWidth * 0.65; // Toplanmış kağıtlarla uyumlu pozisyon
+    const centerY = canvasHeight * 0.55; // Kağıtlarla uyumlu yukarı taşındı
     const radius = 20;
 
     this.ctx.save();
