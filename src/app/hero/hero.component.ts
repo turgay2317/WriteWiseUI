@@ -24,16 +24,16 @@ export const HERO_COLORS = {
   warmGreen: '#80b48c'    // Warm green (accent/check)
 } as const;
 
-// Animation timeline sabitleri - Kağıt animasyonları yavaşlatıldı
+// Animation timeline sabitleri - Kağıt toplanma "Değerlendirme çok kolay" yazısıyla birlikte başlar
 export const ANIMATION_TIMELINE = {
-  dollyAndOrbit: { start: 0.00, end: 0.15 },    // Dolly-in + mikro orbit (kısaltıldı)
-  sweepTransition: { start: 0.15, end: 0.65 },  // Tarama geçişi (YAVAŞLATILDI: 0.35 → 0.50 süre)
-  paperAlignment: { start: 0.65, end: 0.90 },   // Kağıt hizalama (YAVAŞLATILDI: 0.25 → 0.25 süre)
-  circleAndCheck: { start: 0.90, end: 0.97 },   // Çember + check
-  stabilize: { start: 0.97, end: 1.00 }         // Sabitlenme
+  dollyAndOrbit: { start: 0.00, end: 0.01 },    // Çok kısa (neredeyse yok)
+  sweepTransition: { start: 0.01, end: 0.55 },  // Tarama geçişi (daha erken başlar)
+  paperAlignment: { start: 0.48, end: 0.85 },   // Kağıt hizalama (0.48'de yazıyla birlikte başlar)
+  circleAndCheck: { start: 0.85, end: 0.95 },   // Çember + check
+  stabilize: { start: 0.95, end: 1.00 }         // Sabitlenme
 } as const;
 
-// Hikaye metinleri - scroll ile akan dinamik başlıklar
+// Hikaye metinleri - 1. yazı uzatıldı, 2. yazı kısaltıldı, duplikasyon düzeltildi
 export const STORY_TEXTS = [
   {
     text: "Onlarca kağıdı okumak çok yorucu...",
@@ -43,19 +43,19 @@ export const STORY_TEXTS = [
   },
   {
     text: "Öğretmen her öğrenciye yetişemiyor.",
-    start: 0.15,
-    end: 0.65,
+    start: 0.25,
+    end: 0.45,
     type: 'challenge' as const
   },
   {
     text: "Değerlendirme artık çok kolay!",
-    start: 0.65,
-    end: 0.90,
+    start: 0.48,
+    end: 0.70,
     type: 'solution' as const
   },
   {
     text: "Öğrenci öğreniyor, öğretmen rahatlıyor!",
-    start: 0.90,
+    start: 0.73,
     end: 1.00,
     type: 'success' as const
   }
@@ -353,23 +353,18 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
     // Timeline hesaplamaları
     const timeline = ANIMATION_TIMELINE;
 
-    // 0.00-0.20: Dolly-in + micro orbit (sadece hafif transform)
-    let cameraScale = 1;
-    let cameraRotation = 0;
-    if (progress <= timeline.dollyAndOrbit.end) {
-      const dollyProgress = progress / timeline.dollyAndOrbit.end;
-      cameraScale = 0.9 + dollyProgress * 0.1; // 0.9 -> 1.0
-      cameraRotation = Math.sin(dollyProgress * Math.PI * 2) * 2; // ±2 degrees micro orbit
-    }
+    // Dolly animasyonu devre dışı - direkt tam yaklaşmış başlar
+    let cameraScale = 1; // Her zaman tam yaklaşmış
+    let cameraRotation = 0; // Döndürme yok
 
-    // Canvas transform uygula
+    // Canvas transform uygula (sadece sabit transform)
     this.ctx.save();
     this.ctx.translate(canvasWidth / 2, canvasHeight / 2);
     this.ctx.scale(cameraScale, cameraScale);
     this.ctx.rotate(cameraRotation * Math.PI / 180);
     this.ctx.translate(-canvasWidth / 2, -canvasHeight / 2);
 
-    // 0.20-0.55: Sweep transition
+    // 0.01-0.55: Sweep transition
     let sweepX = -100;
     if (progress >= timeline.sweepTransition.start && progress <= timeline.sweepTransition.end) {
       const sweepProgress = (progress - timeline.sweepTransition.start) / 
@@ -457,25 +452,29 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
   private drawGraphiteLines(paper: Paper, progress: number): void {
     if (!this.ctx) return;
 
-    // Yazıların görünürlük hesaplama - başlangıçta var, sonra animasyonlu değişim
+    // Yazıların görünürlük hesaplama - çok yavaş ve yumuşak değişim
     const timeline = ANIMATION_TIMELINE;
-    let textOpacity = 0.5; // Başlangıçta %50 opacity ile görünür
+    let textOpacity = 0.4; // Başlangıçta %40 opacity ile görünür
     
     // Dolly orbit aşamasında (0.00-0.15) sabit görünürlük
     if (progress <= timeline.dollyAndOrbit.end) {
-      textOpacity = 0.5;
+      textOpacity = 0.4;
     }
-    // Sweep transition'da yazılar biraz soluk (0.15-0.65 arası)
+    // Sweep transition'da yazılar çok yavaşça koyulaşır (0.15-0.65 arası)
     else if (progress >= timeline.sweepTransition.start && progress <= timeline.sweepTransition.end) {
       const sweepProgress = (progress - timeline.sweepTransition.start) / 
                            (timeline.sweepTransition.end - timeline.sweepTransition.start);
-      textOpacity = 0.5 + (sweepProgress * 0.1); // %50'den %60'a çık (yavaşça)
+      // Çok yumuşak geçiş - easing fonksiyonu ile
+      const easedProgress = this.scrollService.easing.easeInOutCubic(sweepProgress);
+      textOpacity = 0.4 + (easedProgress * 0.05); // %40'tan %45'e çık (çok yavaş)
     }
-    // Paper alignment'ta yazılar daha net görünür (0.65-0.90 arası)
+    // Paper alignment'ta yazılar biraz daha net görünür (0.65-0.90 arası)
     else if (progress >= timeline.paperAlignment.start) {
       const alignProgress = (progress - timeline.paperAlignment.start) / 
                            (timeline.paperAlignment.end - timeline.paperAlignment.start);
-      textOpacity = 0.6 + (alignProgress * 0.1); // %60'tan %70'e çık
+      // Yine yumuşak geçiş
+      const easedProgress = this.scrollService.easing.easeInOutCubic(alignProgress);
+      textOpacity = 0.45 + (easedProgress * 0.05); // %45'ten %50'ye çık (çok yavaş)
     }
 
     this.ctx.save();
@@ -523,12 +522,9 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
   private drawStoryText(progress: number, canvasWidth: number, canvasHeight: number): void {
     if (!this.ctx) return;
 
-    // Aktif metinleri bul (progress'e göre) - İlk yazı her zaman dahil
-    const activeTexts = STORY_TEXTS.filter((story, index) => {
-      // İlk yazıyı her zaman göster (progress ne olursa olsun)
-      if (index === 0) return true;
-      // Diğerleri için normal filtering
-      return progress >= story.start && progress <= story.end;
+    // Aktif metinleri bul (progress'e göre) - İlk yazı için start'ı biraz toleranslı yap
+    const activeTexts = STORY_TEXTS.filter((story) => {
+      return progress >= (story.start - 0.001) && progress <= story.end;
     });
 
     if (activeTexts.length === 0) return;
@@ -544,24 +540,15 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
       const textProgress = (progress - story.start) / (story.end - story.start);
       let opacity = 1;
       
-      // İlk yazı için özel durum - her zaman görünür (progress=0'da bile)
-      if (originalIndex === 0) {
-        if (progress <= story.end) {
-          opacity = 1; // İlk yazı için sabit opacity
-        } else {
-          opacity = Math.max(0, 1 - ((progress - story.end) / 0.1)); // Yavaş fade out
-        }
-      }
-      // Diğer yazılar için normal fade in/out
-      else {
-        // Fade in (ilk %20'de)
-        if (textProgress < 0.2) {
-          opacity = textProgress / 0.2;
-        }
-        // Fade out (son %20'de) 
-        else if (textProgress > 0.8) {
-          opacity = (1 - textProgress) / 0.2;
-        }
+      // Tüm yazılar için aynı fade in/out kuralları
+      if (textProgress < 0) {
+        opacity = 0; // Henüz başlamamış
+      } else if (textProgress < 0.15) {
+        opacity = textProgress / 0.15; // Fade in (ilk %15'te)
+      } else if (textProgress > 0.85) {
+        opacity = (1 - textProgress) / 0.15; // Fade out (son %15'te)
+      } else {
+        opacity = 1; // Tam görünür
       }
 
       // Tüm metinler için siyah bold stil
@@ -580,7 +567,7 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
 
       // Kağıtların merkez pozisyonunu hesapla (progress'e göre)
       let paperCenterX;
-      if (progress < 0.65) {
+      if (progress < 0.48) {
         // Dağınık haldeyken: originalX aralığının merkezi (%55-80 arası = %67.5)
         paperCenterX = canvasWidth * 0.675;
       } else {
@@ -590,8 +577,8 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
 
       // Metin pozisyonu (kağıtların merkezine göre)
       const textX = paperCenterX; // Yazıyı kağıt merkezine hizala
-      const baseY = canvasHeight * 0.08; // Daha da yukarı taşındı (%15 -> %8)
-      const textY = baseY + (index * 40); // Tek satır için normal mesafe (60 -> 40)
+      const baseY = canvasHeight * 0.24; // Yazıları çok az yukarı aldı (%25 -> %23)
+      const textY = baseY; // Tüm yazılar aynı Y pozisyonunda (üst üste)
 
       // Metin gölgesi (okunabilirlik için)
       this.ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
@@ -632,6 +619,43 @@ export class HeroScrollSceneComponent implements OnInit, AfterViewInit, OnDestro
     if (line.trim().length > 0) {
       this.ctx.fillText(line.trim(), x, currentY);
     }
+  }
+
+  private drawPaperCheckMarks(paper: Paper, progress: number, index: number): void {
+    if (!this.ctx) return;
+
+    const timeline = ANIMATION_TIMELINE;
+    
+    // Mini check işaretleri sadece yazılar geçerken görünür
+    if (progress < timeline.sweepTransition.start || progress > timeline.paperAlignment.end) return;
+
+    // Her kağıt için farklı zamanlarda görünür
+    const paperDelay = index * 0.1; // Her kağıt 0.1 gecikmeyle
+    const adjustedProgress = Math.max(0, progress - paperDelay);
+    
+    if (adjustedProgress < timeline.sweepTransition.start) return;
+
+    const checkOpacity = Math.min(0.4, (adjustedProgress - timeline.sweepTransition.start) * 2);
+
+    this.ctx.save();
+
+    // Check mark pozisyonu (kağıdın sağ üst köşesi)
+    const checkX = paper.width / 2 - 8;
+    const checkY = -paper.height / 2 + 8;
+    const checkSize = 4;
+
+    this.ctx.strokeStyle = this.colors.coolGray;
+    this.ctx.lineWidth = 2;
+    this.ctx.globalAlpha = checkOpacity;
+
+    // Mini check çiz
+    this.ctx.beginPath();
+    this.ctx.moveTo(checkX - checkSize, checkY);
+    this.ctx.lineTo(checkX - checkSize / 3, checkY + checkSize / 2);
+    this.ctx.lineTo(checkX + checkSize, checkY - checkSize / 2);
+    this.ctx.stroke();
+
+    this.ctx.restore();
   }
 
   private drawSweepGradient(sweepX: number): void {
