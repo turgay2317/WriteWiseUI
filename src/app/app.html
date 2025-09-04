@@ -1,0 +1,430 @@
+<header class="appbar">
+  <div class="appbar-inner">
+    <div class="flex items-center gap-2 mr-2">
+      <div class="h-8 w-8 rounded-lg bg-primary/10 grid place-items-center text-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 6 .9-4.5 4.3 1.1 6.3L12 16.9 6.4 19.5l1.1-6.3L3 8.9 9 8z"/></svg>
+      </div>
+    </div>
+
+
+    <div class="hidden md:flex items-center gap-2 ml-2">
+      <span class="text-borderGray">—</span>
+    </div>
+
+
+
+    <button class="ml-auto btn btn-ghost" aria-label="Bildirimler">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 24a2.5 2.5 0 002.45-2h-4.9A2.5 2.5 0 0012 24zm6.36-6V11a6.36 6.36 0 10-12.72 0v7L3 19v1h18v-1l-2.64-1z"/></svg>
+    </button>
+
+    <div class="h-8 w-8 rounded-full bg-infoSurface border border-borderGray grid place-items-center text-espresso text-xs font-semibold select-none">BS</div>
+    <button class="btn btn-secondary ml-2" (click)="logout()">Çıkış</button>
+  </div>
+</header>
+
+<main class="layout-container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
+  <div class="relative h-[calc(100vh-4rem)] overflow-hidden">
+    <!-- Landing 2×2 grid -->
+    <section *ngIf="!expanded()" class="responsive-grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 h-[70vh] max-w-4xl mx-auto">
+      <button class="card p-4 text-left" (click)="expandCard('ogrenciler')">
+        <div class="flex items-center justify-between"><div class="h-10 w-10 rounded-xl bg-infoSurface grid place-items-center text-espresso"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 10-5-5 5 5 0 005 5zm-7 9a7 7 0 0114 0z"/></svg></div><div class="text-xs text-espresso/50">▶</div></div>
+        <h3 class="mt-3 text-lg font-semibold text-espresso">Öğrenciler</h3>
+        <p class="mt-1 text-sm text-espresso/70">Liste ve sınavlar.</p>
+      </button>
+      <button class="card p-4 text-left" (click)="expandCard('sinif-ozet')">
+        <div class="flex items-center justify-between"><div class="h-10 w-10 rounded-xl bg-infoSurface grid place-items-center text-espresso"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h18v4H3zm0 7h18v4H3zm0 7h18v4H3z"/></svg></div><div class="text-xs text-espresso/50">��</div></div>
+        <h3 class="mt-3 text-lg font-semibold text-espresso">Sınıfların Genel Durumu</h3>
+        <p class="mt-1 text-sm text-espresso/70">Özet ve trendler.</p>
+      </button>
+      <button class="card p-4 text-left" (click)="expandCard('sinav-yukle')">
+        <div class="flex items-center justify-between"><div class="h-10 w-10 rounded-xl bg-infoSurface grid place-items-center text-espresso"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 5V2h-2v3H8l4-4 4 4h-3zm-7 4h12v11H6z"/></svg></div><div class="text-xs text-espresso/50">▶</div></div>
+        <h3 class="mt-3 text-lg font-semibold text-espresso">Sınav Yükle</h3>
+        <p class="mt-1 text-sm text-espresso/70">Dosya seçin.</p>
+      </button>
+      <button class="card p-4 text-left" (click)="expandCard('yuklemeler')">
+        <div class="flex items-center justify-between"><div class="h-10 w-10 rounded-xl bg-infoSurface grid place-items-center text-espresso"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v2H4zm0 4h10v2H4zm0 4h16v2H4zm0 4h12v2H4z"/></svg></div><div class="text-xs text-espresso/50">▶</div></div>
+        <h3 class="mt-3 text-lg font-semibold text-espresso">Yüklediğim Sınavlar</h3>
+        <p class="mt-1 text-sm text-espresso/70">Durum ve raporlar.</p>
+      </button>
+    </section>
+
+    <!-- Expanded workspace with dock tiles -->
+    <section *ngIf="expanded()" class="absolute inset-0 overflow-hidden">
+      <!-- Expanded Card -->
+      <div class="card p-0 h-full w-full animate-slide-in relative overflow-hidden" [ngClass]="originClass(expanded())">
+        <!-- Öğrenciler -->
+        <div *ngIf="expanded()==='ogrenciler'" class="h-full p-4 sm:p-6 pt-12 overflow-hidden">
+          <!-- Desktop Kapat Butonu -->
+          <div class="hidden md:flex justify-end mb-3">
+            <button class="btn btn-ghost p-2" (click)="collapseAll()" aria-label="Kapat">
+              <span class="text-lg font-bold text-espresso">✕</span>
+            </button>
+          </div>
+          <!-- Breadcrumb (mobile) -->
+          <div class="md:hidden mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <button class="chip" (click)="selectedStudent.set(null); selectedExam.set(null); activePaneIndex.set(0);">Öğrenciler</button>
+              <button *ngIf="selectedStudent()" class="chip" (click)="selectedExam.set(null); activePaneIndex.set(1);">{{ selectedStudent()?.name }}</button>
+              <button *ngIf="selectedExam()" class="chip">{{ selectedExam()?.date }} {{ selectedExam()?.subject }}</button>
+            </div>
+            <button class="btn btn-ghost p-2" (click)="collapseAll()" aria-label="Kapat">
+              <span class="text-lg font-bold text-espresso">✕</span>
+            </button>
+          </div>
+
+          <!-- Desktop/Xl: 3 cols, Lg: 2 cols with analysis below -->
+          <div class="hidden md:grid gap-4 lg:grid-cols-2 xl:grid-cols-3 h-full" style="grid-template-columns: 1fr 1.15fr 1.15fr;">
+            <!-- Left: List -->
+            <section class="flexible-content min-w-0 overflow-hidden">
+              <div class="flex items-center justify-between">
+                <h4 class="text-base font-semibold text-espresso">Öğrenciler</h4>
+                <input type="search" [value]="studentQuery()" (input)="studentQuery.set(($any($event.target).value))" placeholder="Ad / No ara…" class="ml-3 flex-1 rounded-md border border-borderGray bg-white px-3 py-2 text-sm placeholder:text-espresso/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-espresso"/>
+              </div>
+              <div class="mt-3 max-h-[calc(100%-44px)] overflow-auto divide-y divide-borderGray/60 rounded-lg border border-borderGray">
+                <div *ngIf="filteredStudents().length===0" class="h-14 grid place-items-center text-espresso/60">Liste boş</div>
+                <button *ngFor="let s of filteredStudents(); index as i" class="group w-full text-left h-14 px-3 relative" [ngClass]="{'bg-infoSurface/30': selectedStudent()?.id===s.id}" (mouseenter)="focusStudentIdx.set(i)" (click)="selectStudent(s)">
+                  <div class="absolute left-0 top-0 h-full w-1" [style.background]="focusStudentIdx()===i ? '#ea940c' : 'transparent'"></div>
+                  <div class="flex items-center justify-between h-full">
+                    <div class="text-[17px] font-semibold text-espresso">{{ s.name }}</div>
+                    <div *ngIf="selectedStudent()?.id===s.id" class="text-primary">✔</div>
+                  </div>
+                </button>
+              </div>
+            </section>
+
+            <!-- Middle: Exams or placeholder -->
+            <section class="flexible-content hidden lg:block" [class.animate-slide-in]="selectedStudent()">
+              <div *ngIf="!selectedStudent()" class="h-full min-h-[280px] border-2 border-dashed border-borderGray rounded-lg grid place-items-center text-espresso/50">Seçim yapın</div>
+              <div *ngIf="selectedStudent()" class="">
+                <div class="flex items-center justify-between">
+                  <div class="text-base font-semibold text-espresso whitespace-nowrap overflow-hidden text-ellipsis">{{ selectedStudent()?.name }} · Sınav Listesi</div>
+                </div>
+                <div class="mt-3 max-h-[48vh] overflow-auto divide-y divide-borderGray/60 rounded-lg border border-borderGray">
+                  <div *ngIf="exams().length===0" class="h-12 grid place-items-center text-espresso/60">Sınav yok</div>
+                  <button *ngFor="let e of exams(); index as i" class="w-full text-left h-14 px-3 hover:bg-primary/10" (mouseenter)="focusExamIdx.set(i)" (click)="selectExam(e)"><div class="text-[16px] font-medium text-espresso">{{ e.date }} — {{ e.subject }}</div></button>
+                </div>
+              </div>
+            </section>
+
+            <!-- Right: Analysis (xl) -->
+            <section class="flexible-content hidden xl:block" [class.animate-slide-in]="selectedExam()">
+              <div *ngIf="!selectedExam()" class="h-full min-h-[280px] border-2 border-dashed border-borderGray rounded-lg grid place-items-center text-espresso/50">Seçim yapın</div>
+              <div *ngIf="selectedExam()" class="space-y-3">
+                <div class="text-base font-semibold text-espresso">Sınav Analizi — {{ selectedExam()?.date }} {{ selectedExam()?.subject }}</div>
+                <div class="card p-4">
+                  <div class="grid sm:grid-cols-2 gap-4 items-center">
+                    <div>
+                      <div class="text-xs text-espresso/60 mb-1">Puan</div>
+                      <div class="text-4xl font-semibold text-espresso">{{ selectedExam()?.score }} / 100</div>
+                      <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary" [style.width.%]="selectedExam()?.score || 0"></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-xs text-espresso/60 mb-1">Kopya İhtimali</div>
+                      <div class="text-2xl font-semibold text-espresso">%{{ selectedExam()?.copyProb }}</div>
+                      <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full" [ngStyle]="{ width: ((selectedExam()?.copyProb || 0) + '%'), background: (selectedExam()?.copyProb||0) < 15 ? '#22c55e' : (selectedExam()?.copyProb||0) < 40 ? '#eab308' : '#ef4444' }"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-3">
+                  <div class="card p-4"><div class="text-xs text-espresso/60">Not aralıkları</div>
+                    <svg width="96" height="96" viewBox="0 0 36 36" class="-rotate-90"><circle cx="18" cy="18" r="15.5" stroke="#c8d7f6" stroke-width="6" fill="none" stroke-dasharray="32 100"/><circle cx="18" cy="18" r="15.5" stroke="#b9bdc7" stroke-width="6" fill="none" stroke-dasharray="24 100" stroke-dashoffset="-32"/><circle cx="18" cy="18" r="15.5" stroke="#ea940c" stroke-width="6" fill="none" stroke-dasharray="18 100" stroke-dashoffset="-56"/></svg>
+                  </div>
+                  <div class="card p-4 xl:col-span-2"><div class="text-xs text-espresso/60">Son 5 sınav</div><svg class="mt-2 w-full" viewBox="0 0 120 40"><polyline fill="none" stroke="#7aa5f9" stroke-width="2" points="0,30 24,26 48,28 72,20 96,18 120,22"/></svg></div>
+                </div>
+                <div class="card p-4">
+                  <div class="text-sm font-medium text-espresso mb-2">Soru Dağılımı</div>
+                  <table class="w-full text-sm"><thead class="text-espresso/60 border-b border-borderGray"><tr><th class="text-left py-2 pr-2">Soru #</th><th class="text-left py-2 pr-2">Tip</th><th class="text-left py-2 pr-2">Puan</th><th class="text-left py-2 pr-2">Bilgi</th></tr></thead><tbody><tr class="border-b border-borderGray/60"><td class="py-2 pr-2">1</td><td class="py-2 pr-2">Çoktan Seçmeli</td><td class="py-2 pr-2">4</td><td class="py-2 pr-2" title="AI açıklaması"><svg width="14" height="14" viewBox="0 0 24 24" fill="#b9bdc7"><path d="M11 9h2v2h-2zm0 4h2v6h-2z"/></svg></td></tr><tr class="border-b border-borderGray/60"><td class="py-2 pr-2">2</td><td class="py-2 pr-2">Açık Uçlu</td><td class="py-2 pr-2">8</td><td class="py-2 pr-2" title="AI açıklaması"><svg width="14" height="14" viewBox="0 0 24 24" fill="#b9bdc7"><path d="M11 9h2v2h-2zm0 4h2v6h-2z"/></svg></td></tr><tr><td class="py-2 pr-2">3</td><td class="py-2 pr-2">Karma</td><td class="py-2 pr-2">6</td><td class="py-2 pr-2" title="AI açıklaması"><svg width="14" height="14" viewBox="0 0 24 24" fill="#b9bdc7"><path d="M11 9h2v2h-2zm0 4h2v6h-2z"/></svg></td></tr></tbody></table>
+                </div>
+              </div>
+            </section>
+
+            <!-- On lg (2 cols), analysis below -->
+            <section class="lg:col-span-2 xl:hidden" [class.hidden]="!selectedExam()">
+              <div *ngIf="selectedExam()" class="animate-slide-in space-y-3">
+                <div class="text-base font-semibold text-espresso">Sınav Analizi — {{ selectedExam()?.date }} {{ selectedExam()?.subject }}</div>
+                <div class="card p-4">
+                  <div class="grid sm:grid-cols-2 gap-4 items-center">
+                    <div>
+                      <div class="text-xs text-espresso/60 mb-1">Puan</div>
+                      <div class="text-4xl font-semibold text-espresso">{{ selectedExam()?.score }} / 100</div>
+                      <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary" [style.width.%]="selectedExam()?.score || 0"></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-xs text-espresso/60 mb-1">Kopya İhtimali</div>
+                      <div class="text-2xl font-semibold text-espresso">%{{ selectedExam()?.copyProb }}</div>
+                      <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full" [ngStyle]="{ width: ((selectedExam()?.copyProb || 0) + '%'), background: (selectedExam()?.copyProb||0) < 15 ? '#22c55e' : (selectedExam()?.copyProb||0) < 40 ? '#eab308' : '#ef4444' }"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Mobile stepper -->
+          <div class="md:hidden">
+            <div *ngIf="activePaneIndex()===0">
+              <div class="flex items-center justify-between"><h4 class="text-base font-semibold text-espresso">Öğrenciler</h4><input type="search" [value]="studentQuery()" (input)="studentQuery.set(($any($event.target).value))" placeholder="Ad / No ara…" class="ml-3 flex-1 rounded-md border border-borderGray bg-white px-3 py-2 text-sm placeholder:text-espresso/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-espresso"/></div>
+              <div class="mt-3 max-h-[60vh] overflow-auto divide-y divide-borderGray/60 rounded-lg border border-borderGray"><button *ngFor="let s of filteredStudents(); index as i" class="w-full text-left h-14 px-3" (click)="selectStudent(s)"><div class="text-[17px] font-semibold text-espresso">{{ s.name }}</div></button></div>
+            </div>
+            <div *ngIf="activePaneIndex()===1"><div class="flex items-center justify-between"><div class="text-base font-semibold text-espresso whitespace-nowrap overflow-hidden text-ellipsis">{{ selectedStudent()?.name }} · Sınav Listesi</div></div><div class="mt-3 max-h-[60vh] overflow-auto divide-y divide-borderGray/60 rounded-lg border border-borderGray"><button *ngFor="let e of exams(); index as i" class="w-full text-left h-14 px-3" (click)="selectExam(e)"><div class="text-[16px] font-medium text-espresso">{{ e.date }} — {{ e.subject }}</div></button></div></div>
+            <div *ngIf="activePaneIndex()===2" class="space-y-3"><div class="text-base font-semibold text-espresso">Sınav Analizi — {{ selectedExam()?.date }} {{ selectedExam()?.subject }}</div><div class="card p-4"><div class="grid sm:grid-cols-2 gap-4 items-center"><div><div class="text-xs text-espresso/60 mb-1">Puan</div><div class="text-4xl font-semibold text-espresso">{{ selectedExam()?.score }} / 100</div><div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden"><div class="h-full bg-primary" [style.width.%]="selectedExam()?.score || 0"></div></div></div><div><div class="text-xs text-espresso/60 mb-1">Kopya İhtimali</div><div class="text-2xl font-semibold text-espresso">%{{ selectedExam()?.copyProb }}</div><div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden"><div class="h-full rounded-full" [ngStyle]="{ width: ((selectedExam()?.copyProb || 0) + '%'), background: (selectedExam()?.copyProb||0) < 15 ? '#22c55e' : (selectedExam()?.copyProb||0) < 40 ? '#eab308' : '#ef4444' }"></div></div></div></div></div></div>
+          </div>
+        </div>
+
+        <!-- Sınıfların Genel Durumu (step-by-step) -->
+        <div *ngIf="expanded()==='sinif-ozet'" class="h-full p-4 sm:p-6 overflow-hidden">
+          <!-- Kapat Butonu -->
+          <div class="flex justify-end mb-1">
+            <button class="btn btn-ghost p-2" (click)="collapseAll()" aria-label="Kapat">
+              <span class="text-lg font-bold text-espresso">✕</span>
+            </button>
+          </div>
+          <div class="hidden md:grid gap-3 lg:grid-cols-2 xl:grid-cols-3 h-full" style="grid-template-columns: 1fr 1.15fr 1.15fr;">
+            <section class="flexible-content overflow-hidden">
+              <div class="flex items-center justify-between">
+                <h4 class="text-base font-semibold text-espresso">Sınıflar</h4>
+              </div>
+              <div class="mt-2 max-h-[calc(100%-44px)] overflow-auto divide-y divide-borderGray/60 rounded-lg border border-borderGray">
+                <button *ngFor="let c of classes(); index as i" class="group w-full text-left h-14 px-3 relative" [ngClass]="{'bg-infoSurface/30': selectedClass()===c}" (click)="chooseClass(c)">
+                  <div class="flex items-center justify-between h-full">
+                    <div class="text-[17px] font-semibold text-espresso">{{ c }}</div>
+                    <div *ngIf="selectedClass()===c" class="text-primary">✔</div>
+                  </div>
+                </button>
+              </div>
+            </section>
+            <section class="flexible-content hidden lg:block" [class.animate-slide-in]="selectedClass()">
+              <div *ngIf="!selectedClass()" class="h-full min-h-[280px] border-2 border-dashed border-borderGray rounded-lg grid place-items-center text-espresso/50">Seçim yapın</div>
+              <div *ngIf="selectedClass()" class="">
+                <div class="text-base font-semibold text-espresso">{{ selectedClass() }}</div>
+                <div class="mt-2 max-h-[48vh] overflow-auto divide-y divide-borderGray/60 rounded-lg border border-borderGray">
+                  <button *ngFor="let s of subjects()" class="w-full text-left h-12 px-3 relative hover:bg-primary/10" (click)="chooseSubject(s)" [ngClass]="{'bg-infoSurface/30': selectedSubject()===s}">
+                    <div class="flex items-center justify-between h-full">
+                      <div class="text-[15px] font-semibold text-espresso">{{ s }}</div>
+                      <div *ngIf="selectedSubject()===s" class="text-primary">✔</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </section>
+            <section class="flexible-content hidden xl:block" [class.animate-slide-in]="selectedSubject()"><div *ngIf="!selectedSubject()" class="h-full min-h-[280px] border-2 border-dashed border-borderGray rounded-lg grid place-items-center text-espresso/50">Seçim yapın</div><div *ngIf="selectedSubject()" class="space-y-2"><div class="text-base font-semibold text-espresso">{{ selectedClass() }} · {{ selectedSubject() }}</div><div class="card p-3" *ngIf="classStats()"><div class="grid sm:grid-cols-2 gap-4 items-center"><div><div class="text-xs text-espresso/60 mb-1">Sınıf Ortalaması</div><div class="text-4xl font-semibold text-espresso">{{ classStats()?.avg }} / 100</div><div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden"><div class="h-full bg-primary" [style.width.%]="classStats()?.avg || 0"></div></div></div><div><div class="text-xs text-espresso/60 mb-1">Kopya İhtimali</div><div class="text-2xl font-semibold text-espresso">%{{ classStats()?.copyProb }}</div><div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden"><div class="h-full rounded-full" [ngStyle]="{ width: ((classStats()?.copyProb || 0) + '%'), background: (classStats()?.copyProb||0) < 15 ? '#22c55e' : (classStats()?.copyProb||0) < 40 ? '#eab308' : '#ef4444' }"></div></div></div></div></div><div class="card p-3" *ngIf="classStats()"><div class="text-sm font-medium text-espresso mb-2">Sınav Puan Aralığı</div><div class="flex items-center gap-6"><svg width="120" height="120" viewBox="0 0 36 36" class="-rotate-90"><circle cx="18" cy="18" r="15.5" stroke="#e5e7eb" stroke-width="6" fill="none" stroke-dasharray="100 100"/><ng-container *ngFor="let seg of rangesChartSegments()"><circle cx="18" cy="18" r="15.5" [attr.stroke]="seg.color" stroke-width="6" fill="none" [attr.stroke-dasharray]="seg.length + ' 100'" [attr.stroke-dashoffset]="-seg.offset"></circle></ng-container></svg><div class="text-sm space-y-1"><div *ngFor="let seg of rangesChartSegments()" class="flex items-center gap-2"><span class="inline-block w-3 h-3 rounded" [style.background]="seg.color"></span><span>{{ seg.label }} — {{ seg.count }} kişi</span></div></div></div></div><div class="flex gap-2"><button class="btn btn-secondary">PDF</button><button class="btn btn-secondary">CSV</button></div></div></section>
+
+            <!-- On lg (2 cols), analysis below for class summary -->
+            <section class="lg:col-span-2 xl:hidden" [class.hidden]="!selectedSubject()">
+              <div *ngIf="selectedSubject()" class="animate-slide-in space-y-2">
+                <div class="text-base font-semibold text-espresso">{{ selectedClass() }} · {{ selectedSubject() }}</div>
+                <div class="card p-3" *ngIf="classStats()">
+                  <div class="grid sm:grid-cols-2 gap-4 items-center">
+                    <div>
+                      <div class="text-xs text-espresso/60 mb-1">Sınıf Ortalaması</div>
+                      <div class="text-4xl font-semibold text-espresso">{{ classStats()?.avg }} / 100</div>
+                      <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary" [style.width.%]="classStats()?.avg || 0"></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-xs text-espresso/60 mb-1">Kopya İhtimali</div>
+                      <div class="text-2xl font-semibold text-espresso">%{{ classStats()?.copyProb }}</div>
+                      <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full" [ngStyle]="{ width: ((classStats()?.copyProb || 0) + '%'), background: (classStats()?.copyProb||0) < 15 ? '#22c55e' : (classStats()?.copyProb||0) < 40 ? '#eab308' : '#ef4444' }"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card p-3" *ngIf="classStats()">
+                  <div class="text-sm font-medium text-espresso mb-2">Sınav Puan Aralığı</div>
+                  <div class="flex items-center gap-6">
+                    <svg width="120" height="120" viewBox="0 0 36 36" class="-rotate-90">
+                      <circle cx="18" cy="18" r="15.5" stroke="#e5e7eb" stroke-width="6" fill="none" stroke-dasharray="100 100"/>
+                      <ng-container *ngFor="let seg of rangesChartSegments()">
+                        <circle cx="18" cy="18" r="15.5" [attr.stroke]="seg.color" stroke-width="6" fill="none" [attr.stroke-dasharray]="seg.length + ' 100'" [attr.stroke-dashoffset]="-seg.offset"></circle>
+                      </ng-container>
+                    </svg>
+                    <div class="text-sm space-y-1">
+                      <div *ngFor="let seg of rangesChartSegments()" class="flex items-center gap-2">
+                        <span class="inline-block w-3 h-3 rounded" [style.background]="seg.color"></span>
+                        <span>{{ seg.label }} — {{ seg.count }} kişi</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Sınav Yükle -->
+        <div *ngIf="expanded()==='sinav-yukle'" class="h-full p-4 sm:p-6 overflow-auto">
+          <!-- Kapat Butonu -->
+          <div class="flex justify-end mb-4">
+            <button class="btn btn-ghost p-2" (click)="collapseAll()" aria-label="Kapat">
+              <span class="text-lg font-bold text-espresso">✕</span>
+            </button>
+          </div>
+          <div class="border-2 border-dashed border-borderGray rounded-lg p-8 text-center">
+            <div class="text-sm text-espresso/70">Bırak veya</div>
+            <div class="mt-3 flex items-center justify-center gap-3"><input type="file" accept=".pdf,.png,.jpg,.jpeg" class="hidden" id="file2"/><label for="file2" class="btn btn-secondary">Dosya Seç</label><button class="btn btn-primary" (click)="startAnalysisSuccess()">Analizi Başlat</button><button class="btn btn-ghost p-2" (click)="collapseAll()" aria-label="İptal"><span class="text-lg font-bold text-espresso">✕</span></button></div>
+            <div class="mt-4 h-1 w-full bg-gradient-to-r from-infoSurface via-borderGray to-primary rounded-full animate-[pulse_2s_ease-in-out_infinite]"></div>
+          </div>
+          <div class="mt-4"><label class="text-sm font-medium text-espresso">LLM Değerlendirme Kuralları</label><textarea rows="5" class="mt-2 w-full rounded-md border border-borderGray px-3 py-2 text-sm" placeholder="Açık uçlu sorularda anahtar kavramlar geçerse kısmi puan ver.&#10;Doğru yöntem-yanlış sonuç için %50 puan uygula.&#10;Çoktan seçmelide net anahtar: yalnız doğru seçenek tam puan."></textarea></div>
+          <div class="mt-3 grid sm:grid-cols-2 lg:grid-cols-3 gap-3"><div><label class="text-sm text-espresso">Sınav Adı</label><input class="mt-1 w-full rounded-md border border-borderGray px-3 py-2 text-sm"/></div><div><label class="text-sm text-espresso">Ders</label><select class="mt-1 w-full rounded-md border border-borderGray px-3 py-2 text-sm"><option>Matematik</option><option>Türkçe</option><option>Fen</option></select></div><div><label class="text-sm text-espresso">Sınıf(lar)</label><div class="mt-1 flex flex-wrap gap-2"><span class="chip">4A</span><span class="chip">4B</span><span class="chip">5A</span><span class="chip">5B</span></div></div><div><label class="text-sm text-espresso">Tür</label><select class="mt-1 w-full rounded-md border border-borderGray px-3 py-2 text-sm"><option>Çoktan Seçmeli</option><option>Açık Uçlu</option><option>Karma</option></select></div><div><label class="text-sm text-espresso">Tarih</label><input type="date" class="mt-1 w-full rounded-md border border-borderGray px-3 py-2 text-sm"/></div></div>
+        </div>
+
+        <!-- Yüklediğim Sınavlar -->
+        <div *ngIf="expanded()==='yuklemeler'" class="h-full px-2 sm:px-3 pt-0 pb-2 overflow-hidden">
+          <!-- Kapat Butonu -->
+          <div class="flex justify-end -mb-1 mt-1">
+            <button class="btn btn-ghost px-1 py-0" (click)="collapseAll()" aria-label="Kapat">
+              <span class="text-base font-bold text-espresso">✕</span>
+            </button>
+          </div>
+          <!-- Üst Kısım: Liste + Özet -->
+          <div class="hidden md:grid gap-4 h-[40vh] grid-cols-[1.5fr_1fr]">
+            <!-- List -->
+            <section class="flex flex-col h-full overflow-hidden">
+              <div class="mb-2 text-center">
+                <h4 class="text-base font-semibold text-espresso">Yüklenen Sınavlar Listesi</h4>
+              </div>
+              <div class="flex-1 border border-borderGray rounded-lg overflow-hidden">
+                <div class="bg-slate-50 border-b border-borderGray text-espresso/70 sticky top-0 z-10">
+                  <div class="grid grid-cols-5 text-left p-3 font-semibold text-base">
+                    <div>Ders</div>
+                    <div>Sınıf</div>
+                    <div>Tarih</div>
+                    <div>Öğrenci</div>
+                    <div>Durum</div>
+                  </div>
+                </div>
+                <div class="flex-1 overflow-auto">
+                  <div *ngFor="let ux of uploadExams()" (click)="selectUploadedExam(ux)" class="grid grid-cols-5 border-b border-borderGray/60 hover:bg-primary/10 cursor-pointer p-3" [ngClass]="{'bg-infoSurface/30': selectedUpload()?.id===ux.id}">
+                    <div class="font-semibold">{{ ux.subject }}</div>
+                    <div>{{ ux.clazz }}</div>
+                    <div>{{ ux.date }}</div>
+                    <div>{{ ux.students }}</div>
+                    <div><span class="chip">{{ ux.status }}</span></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Detail with expandable sections -->
+            <section class="flex flex-col h-full">
+              <div class="mb-2">
+                <h4 class="text-base font-semibold text-espresso invisible">Placeholder</h4>
+              </div>
+              <!-- Tek Container - Seçim + Özet -->
+              <div class="card p-3 h-full flex flex-col" *ngIf="selectedUpload(); else noSelection">
+                <!-- Üst Kısım: Başlık + Sorular Butonu -->
+                <div class="flex items-center justify-between mb-3">
+                  <div class="text-base font-semibold text-espresso">{{ selectedUpload()?.subject + ' · ' + selectedUpload()?.clazz }}</div>
+                  <button class="btn btn-secondary" (click)="openUploadSection('sorular')">Sorular</button>
+                </div>
+                
+                <!-- Alt Kısım: Özet Bilgileri -->
+                <div class="text-sm font-medium mb-2">Sınav Özeti</div>
+                <div class="grid grid-cols-2 gap-2 flex-1">
+                  <div class="bg-slate-50 p-2 rounded-lg"><div class="text-sm font-semibold text-espresso">Sınıf Not Ortalaması</div><div class="text-mono text-xl">78</div></div>
+                  <div class="bg-slate-50 p-2 rounded-lg"><div class="text-sm font-semibold text-espresso">En Yüksek Not</div><div class="text-mono text-lg">94</div></div>
+                  <div class="bg-slate-50 p-2 rounded-lg"><div class="text-sm font-semibold text-espresso">En Düşük Not</div><div class="text-mono text-lg">52</div></div>
+                  <div class="bg-slate-50 p-2 rounded-lg"><div class="text-sm font-semibold text-espresso">Soru Sayısı</div><div class="text-mono text-lg">12</div></div>
+                </div>
+              </div>
+              
+              <!-- Seçim Yapılmadığında -->
+              <ng-template #noSelection>
+                <div class="card p-3 h-full grid place-items-center">
+                  <div class="text-center">
+                    <div class="text-base font-semibold text-espresso mb-1">Seçim yapın</div>
+                    <div class="text-xs text-espresso/70">Listeden bir sınav seçin.</div>
+                  </div>
+                </div>
+              </ng-template>
+
+            </section>
+          </div>
+
+          <!-- Alt Kısım: Sorular Paneli -->
+          <div class="hidden md:block mt-4" *ngIf="selectedUpload() && uploadTab()==='sorular'">
+            <div class="card h-[42vh] flex flex-col animate-slide-in">
+              <!-- Başlık (Sabit) -->
+              <div class="text-base font-semibold text-espresso p-4 pb-2 border-b border-borderGray">
+                {{ selectedUpload()?.date }} {{ selectedUpload()?.subject }} Sınavı
+              </div>
+              
+              <!-- İçerik (Scroll) -->
+              <div class="flex-1 overflow-auto p-4">
+                <div *ngIf="currentQuestion() as q; else noQuestion">
+                  <!-- Soru Başlığı -->
+                  <div class="text-lg font-semibold text-espresso mb-4">
+                    {{ (currentQuestionIdx()+1) }}. Soru: {{ q.text }}
+                  </div>
+                  
+                  <!-- Ana İçerik Grid -->
+                  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <!-- Sol: Grup Cevapları -->
+                    <div class="lg:col-span-2">
+                      <h4 class="text-sm font-semibold text-espresso mb-2">Öğrenci Cevapları</h4>
+                      <div class="space-y-2">
+                        <div *ngFor="let g of q.groups; index as gi" class="bg-slate-50 p-3 rounded-lg">
+                          <div class="text-sm font-medium text-espresso mb-1">Grup {{ gi+1 }} — {{ g.count }} kişi</div>
+                          <ul class="list-disc pl-4 text-sm text-espresso/80">
+                            <li *ngFor="let ans of g.answers">{{ ans }}</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Sağ: Puanlama -->
+                    <div class="space-y-3">
+                      <!-- LLM Puanı -->
+                      <div class="bg-blue-50 p-3 rounded-lg">
+                        <div class="text-sm font-semibold text-blue-800">LLM Puanı</div>
+                        <div class="text-xl font-bold text-blue-900">{{ q.llmScore }} / {{ q.maxScore }}</div>
+                        <div class="text-xs text-blue-700 mt-1">{{ q.rationale }}</div>
+                      </div>
+                      
+                      <!-- Öğretmen Puanı -->
+                      <div class="bg-green-50 p-3 rounded-lg">
+                        <div class="text-sm font-semibold text-green-800 mb-2">Öğretmen Puanı</div>
+                        <div class="flex items-center gap-2 mb-2">
+                          <button class="btn btn-secondary text-xs px-2 py-1" (click)="adjustTeacherScore(-1)">-1</button>
+                          <input type="number" class="w-16 rounded-md border border-borderGray px-2 py-1 text-sm text-center" [value]="q.teacherScore" (input)="setTeacherScore(+$any($event.target).value)"/>
+                          <button class="btn btn-secondary text-xs px-2 py-1" (click)="adjustTeacherScore(1)">+1</button>
+                        </div>
+                        <div class="text-xs text-green-700">Maksimum: {{ q.maxScore }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #noQuestion>
+                  <div class="text-sm text-espresso/70">Soru bulunamadı.</div>
+                </ng-template>
+              </div>
+              
+              <!-- Navigasyon (Sabit Alt) -->
+              <div class="flex items-center justify-between p-3 pt-2 border-t border-borderGray bg-gray-50">
+                <button class="btn btn-primary px-3 py-2" (click)="prevQuestion()">← Önceki</button>
+                <div class="text-sm font-semibold text-espresso">Soru {{ currentQuestionIdx()+1 }} / {{ currentQuestions().length }}</div>
+                <button class="btn btn-primary px-3 py-2" (click)="nextQuestion()">Sonraki →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+</main>
+
+<!-- Toasts -->
+<div class="fixed bottom-4 right-4 space-y-2 z-50">
+  <div *ngFor="let t of toasts()" class="px-4 py-2 rounded-md text-sm text-white shadow-soft-card" [class.bg-success]="t.type==='success'" [class.bg-error]="t.type==='error'" [class.bg-info]="t.type==='info'">{{ t.text }}</div>
+</div>

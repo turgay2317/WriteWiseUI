@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --divider: theme(colors.borderGray);
+  }
+  html, body { height: 100%; }
+  body { @apply bg-baseBg text-espresso antialiased; }
+}
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-md px-3.5 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2; }
+  .btn-primary { @apply bg-primary text-espresso hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-primary; }
+  .btn-secondary { @apply bg-white text-espresso border border-borderGray hover:bg-slate-50 active:bg-slate-100 focus-visible:ring-espresso; }
+  .btn-ghost { @apply text-espresso hover:bg-slate-100 active:bg-slate-200 focus-visible:ring-espresso; }
+
+  .chip { @apply inline-flex items-center rounded-full border border-borderGray bg-white px-3 py-1 text-xs font-medium text-espresso/80 hover:bg-slate-50; }
+  .chip-active { @apply bg-infoSurface text-espresso border-borderGray; }
+
+  .card { @apply bg-white dark:bg-darkCard border border-borderGray/80 dark:border-white/10 rounded-card shadow-soft-card transition-[transform,box-shadow] will-change-transform; }
+  .card:hover { @apply -translate-y-0.5 shadow-soft-card-lg; }
+  .divider-h { @apply w-px self-stretch bg-borderGray; }
+  .divider-v { @apply h-px w-full bg-borderGray; }
+
+  .skeleton { background: linear-gradient(90deg, rgba(185,189,199,0.2) 25%, rgba(185,189,199,0.35) 37%, rgba(185,189,199,0.2) 63%); background-size: 700px 100%; @apply animate-shimmer rounded; }
+
+  .ripple-container { position: relative; overflow: hidden; }
+  .ripple-circle { position: absolute; border-radius: 9999px; pointer-events: none; background: rgba(0,0,0,0.15); transform: scale(0); animation: ripple 500ms ease-out forwards; }
+
+  .appbar { @apply sticky top-0 z-30 w-full bg-white/90 dark:bg-darkCard/80 backdrop-blur border-b border-borderGray/70 dark:border-white/10; }
+  .appbar-inner { @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-4; }
+
+  /* Layout fixes for responsive design */
+  .layout-container { @apply w-full max-w-full overflow-hidden; }
+  .responsive-grid { @apply grid gap-4 w-full; }
+  .flexible-content { @apply min-w-0 flex-1 overflow-auto; }
+}
+
+@layer utilities {
+  .text-mono { @apply font-mono tabular-nums; }
+}

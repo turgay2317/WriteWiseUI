@@ -1,0 +1,270 @@
+<!-- Student List Component Template -->
+<div class="h-full p-4 sm:p-6 pt-12 overflow-hidden">
+  <!-- Desktop Kapat Butonu -->
+  <div class="hidden md:flex justify-end mb-3">
+    <button class="btn btn-ghost p-2" (click)="appState.collapseAll()" aria-label="Kapat">
+      <span class="text-lg font-bold text-espresso">✕</span>
+    </button>
+  </div>
+  
+  <!-- Breadcrumb (mobile) -->
+  <div class="md:hidden mb-3 flex flex-wrap items-center justify-between gap-2">
+    <div class="flex flex-wrap items-center gap-2">
+      <button class="chip" (click)="studentService.resetStudentModule()">Öğrenciler</button>
+      <button *ngIf="studentService.selectedStudent()" class="chip" (click)="studentService.selectedExam.set(null); studentService.activePaneIndex.set(1);">
+        {{ studentService.selectedStudent()?.name }}
+      </button>
+      <button *ngIf="studentService.selectedExam()" class="chip">
+        {{ studentService.selectedExam()?.date }} {{ studentService.selectedExam()?.subject }}
+      </button>
+    </div>
+    <button class="btn btn-ghost p-2" (click)="appState.collapseAll()" aria-label="Kapat">
+      <span class="text-lg font-bold text-espresso">✕</span>
+    </button>
+  </div>
+
+  <!-- Desktop/Xl: 3 cols, Lg: 2 cols with analysis below -->
+  <div class="hidden md:grid gap-4 lg:grid-cols-2 xl:grid-cols-3 h-full" style="grid-template-columns: 1fr 1.15fr 1.15fr;">
+    <!-- Left: Student List -->
+    <section class="flexible-content min-w-0 overflow-hidden">
+      <div class="flex items-center justify-between">
+        <h4 class="text-base font-semibold text-espresso">Öğrenciler</h4>
+        <input 
+          type="search" 
+          [value]="studentService.query()" 
+          (input)="studentService.setQuery($any($event.target).value)" 
+          placeholder="Ad / No ara…" 
+          class="ml-3 flex-1 rounded-md border border-borderGray bg-white px-3 py-2 text-sm placeholder:text-espresso/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-espresso"/>
+      </div>
+      
+      <div class="mt-3 max-h-[calc(100%-44px)] overflow-auto divide-y divide-borderGray/60 rounded-lg border border-borderGray">
+        <div *ngIf="studentService.filteredStudents().length===0" class="h-14 grid place-items-center text-espresso/60">
+          Liste boş
+        </div>
+        
+        <button 
+          *ngFor="let student of studentService.filteredStudents(); index as i" 
+          class="group w-full text-left h-14 px-3 relative" 
+          [ngClass]="{'bg-infoSurface/30': studentService.selectedStudent()?.id===student.id}" 
+          (mouseenter)="studentService.focusStudentIdx.set(i)" 
+          (click)="studentService.selectStudent(student)">
+          
+          <div class="absolute left-0 top-0 h-full w-1" 
+               [style.background]="studentService.focusStudentIdx()===i ? '#ea940c' : 'transparent'">
+          </div>
+          
+          <div class="flex items-center justify-between h-full">
+            <div class="text-[17px] font-semibold text-espresso">{{ student.name }}</div>
+            <div *ngIf="studentService.selectedStudent()?.id===student.id" class="text-primary">✔</div>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Middle: Exam List -->
+    <section class="flexible-content hidden lg:block" [class.animate-slide-in]="studentService.selectedStudent()">
+      <div *ngIf="!studentService.selectedStudent()" class="h-full min-h-[280px] border-2 border-dashed border-borderGray rounded-lg grid place-items-center text-espresso/50">Seçim yapın</div>
+      <div *ngIf="studentService.selectedStudent()">
+        <div class="flex items-center justify-between">
+          <div class="text-base font-semibold text-espresso whitespace-nowrap overflow-hidden text-ellipsis">{{ studentService.selectedStudent()?.name }} · Sınav Listesi</div>
+        </div>
+        <div class="mt-3 max-h-[48vh] overflow-auto divide-y divide-borderGray/60 rounded-lg border border-borderGray">
+          <div *ngIf="studentService.exams().length===0" class="h-12 grid place-items-center text-espresso/60">Sınav yok</div>
+          <button 
+            *ngFor="let exam of studentService.exams(); index as i" 
+            class="w-full text-left h-14 px-3 hover:bg-primary/10" 
+            (mouseenter)="studentService.focusExamIdx.set(i)" 
+            (click)="studentService.selectExam(exam)">
+            <div class="text-[16px] font-medium text-espresso">{{ exam.date }} — {{ exam.subject }}</div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right: Exam Analysis (xl) -->
+    <section class="flexible-content hidden xl:block" [class.animate-slide-in]="studentService.selectedExam()">
+      <div *ngIf="!studentService.selectedExam()" class="h-full min-h-[280px] border-2 border-dashed border-borderGray rounded-lg grid place-items-center text-espresso/50">Seçim yapın</div>
+      <div *ngIf="studentService.selectedExam()" class="space-y-3">
+        <div class="text-base font-semibold text-espresso">Sınav Analizi — {{ studentService.selectedExam()?.date }} {{ studentService.selectedExam()?.subject }}</div>
+        <div class="card p-4">
+          <div class="grid sm:grid-cols-2 gap-4 items-center">
+            <div>
+              <div class="text-xs text-espresso/60 mb-1">Puan</div>
+              <div class="text-4xl font-semibold text-espresso">{{ studentService.selectedExam()?.score }} / 100</div>
+              <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+                <div class="h-full bg-primary" [style.width.%]="studentService.selectedExam()?.score || 0"></div>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs text-espresso/60 mb-1">Kopya İhtimali</div>
+              <div class="text-2xl font-semibold text-espresso">%{{ studentService.selectedExam()?.copyProb }}</div>
+              <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+                <div class="h-full rounded-full" 
+                     [ngStyle]="{ 
+                       width: ((studentService.selectedExam()?.copyProb || 0) + '%'), 
+                       background: (studentService.selectedExam()?.copyProb||0) < 15 ? '#22c55e' : 
+                                  (studentService.selectedExam()?.copyProb||0) < 40 ? '#eab308' : '#ef4444' 
+                     }"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div class="card p-4">
+            <div class="text-xs text-espresso/60">Not aralıkları</div>
+            <svg width="96" height="96" viewBox="0 0 36 36" class="-rotate-90">
+              <circle cx="18" cy="18" r="15.5" stroke="#c8d7f6" stroke-width="6" fill="none" stroke-dasharray="32 100"/>
+              <circle cx="18" cy="18" r="15.5" stroke="#b9bdc7" stroke-width="6" fill="none" stroke-dasharray="24 100" stroke-dashoffset="-32"/>
+              <circle cx="18" cy="18" r="15.5" stroke="#ea940c" stroke-width="6" fill="none" stroke-dasharray="18 100" stroke-dashoffset="-56"/>
+            </svg>
+          </div>
+          <div class="card p-4 xl:col-span-2">
+            <div class="text-xs text-espresso/60">Son 5 sınav</div>
+            <svg class="mt-2 w-full" viewBox="0 0 120 40">
+              <polyline fill="none" stroke="#7aa5f9" stroke-width="2" points="0,30 24,26 48,28 72,20 96,18 120,22"/>
+            </svg>
+          </div>
+        </div>
+        <div class="card p-4">
+          <div class="text-sm font-medium text-espresso mb-2">Soru Dağılımı</div>
+          <table class="w-full text-sm">
+            <thead class="text-espresso/60 border-b border-borderGray">
+              <tr>
+                <th class="text-left py-2 pr-2">Soru #</th>
+                <th class="text-left py-2 pr-2">Tip</th>
+                <th class="text-left py-2 pr-2">Puan</th>
+                <th class="text-left py-2 pr-2">Bilgi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-borderGray/60">
+                <td class="py-2 pr-2">1</td>
+                <td class="py-2 pr-2">Çoktan Seçmeli</td>
+                <td class="py-2 pr-2">4</td>
+                <td class="py-2 pr-2" title="AI açıklaması">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#b9bdc7">
+                    <path d="M11 9h2v2h-2zm0 4h2v6h-2z"/>
+                  </svg>
+                </td>
+              </tr>
+              <tr class="border-b border-borderGray/60">
+                <td class="py-2 pr-2">2</td>
+                <td class="py-2 pr-2">Açık Uçlu</td>
+                <td class="py-2 pr-2">8</td>
+                <td class="py-2 pr-2" title="AI açıklaması">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#b9bdc7">
+                    <path d="M11 9h2v2h-2zm0 4h2v6h-2z"/>
+                  </svg>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-2">3</td>
+                <td class="py-2 pr-2">Karma</td>
+                <td class="py-2 pr-2">6</td>
+                <td class="py-2 pr-2" title="AI açıklaması">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#b9bdc7">
+                    <path d="M11 9h2v2h-2zm0 4h2v6h-2z"/>
+                  </svg>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- On lg (2 cols), analysis below -->
+    <section class="lg:col-span-2 xl:hidden" [class.hidden]="!studentService.selectedExam()">
+      <div *ngIf="studentService.selectedExam()" class="animate-slide-in space-y-3">
+        <div class="text-base font-semibold text-espresso">Sınav Analizi — {{ studentService.selectedExam()?.date }} {{ studentService.selectedExam()?.subject }}</div>
+        <div class="card p-4">
+          <div class="grid sm:grid-cols-2 gap-4 items-center">
+            <div>
+              <div class="text-xs text-espresso/60 mb-1">Puan</div>
+              <div class="text-4xl font-semibold text-espresso">{{ studentService.selectedExam()?.score }} / 100</div>
+              <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+                <div class="h-full bg-primary" [style.width.%]="studentService.selectedExam()?.score || 0"></div>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs text-espresso/60 mb-1">Kopya İhtimali</div>
+              <div class="text-2xl font-semibold text-espresso">%{{ studentService.selectedExam()?.copyProb }}</div>
+              <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+                <div class="h-full rounded-full" 
+                     [ngStyle]="{ 
+                       width: ((studentService.selectedExam()?.copyProb || 0) + '%'), 
+                       background: (studentService.selectedExam()?.copyProb||0) < 15 ? '#22c55e' : 
+                                  (studentService.selectedExam()?.copyProb||0) < 40 ? '#eab308' : '#ef4444' 
+                     }"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Mobile stepper -->
+  <div class="md:hidden">
+    <div *ngIf="studentService.activePaneIndex()===0">
+      <div class="flex items-center justify-between">
+        <h4 class="text-base font-semibold text-espresso">Öğrenciler</h4>
+        <input 
+          type="search" 
+          [value]="studentService.query()" 
+          (input)="studentService.setQuery($any($event.target).value)" 
+          placeholder="Ad / No ara…" 
+          class="ml-3 flex-1 rounded-md border border-borderGray bg-white px-3 py-2 text-sm placeholder:text-espresso/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-espresso"/>
+      </div>
+      <div class="mt-3 max-h-[60vh] overflow-auto divide-y divide-borderGray/60 rounded-lg border border-borderGray">
+        <button 
+          *ngFor="let student of studentService.filteredStudents(); index as i" 
+          class="w-full text-left h-14 px-3" 
+          (click)="studentService.selectStudent(student)">
+          <div class="text-[17px] font-semibold text-espresso">{{ student.name }}</div>
+        </button>
+      </div>
+    </div>
+    
+    <div *ngIf="studentService.activePaneIndex()===1">
+      <div class="flex items-center justify-between">
+        <div class="text-base font-semibold text-espresso whitespace-nowrap overflow-hidden text-ellipsis">{{ studentService.selectedStudent()?.name }} · Sınav Listesi</div>
+      </div>
+      <div class="mt-3 max-h-[60vh] overflow-auto divide-y divide-borderGray/60 rounded-lg border border-borderGray">
+        <button 
+          *ngFor="let exam of studentService.exams(); index as i" 
+          class="w-full text-left h-14 px-3" 
+          (click)="studentService.selectExam(exam)">
+          <div class="text-[16px] font-medium text-espresso">{{ exam.date }} — {{ exam.subject }}</div>
+        </button>
+      </div>
+    </div>
+    
+    <div *ngIf="studentService.activePaneIndex()===2" class="space-y-3">
+      <div class="text-base font-semibold text-espresso">Sınav Analizi — {{ studentService.selectedExam()?.date }} {{ studentService.selectedExam()?.subject }}</div>
+      <div class="card p-4">
+        <div class="grid sm:grid-cols-2 gap-4 items-center">
+          <div>
+            <div class="text-xs text-espresso/60 mb-1">Puan</div>
+            <div class="text-4xl font-semibold text-espresso">{{ studentService.selectedExam()?.score }} / 100</div>
+            <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+              <div class="h-full bg-primary" [style.width.%]="studentService.selectedExam()?.score || 0"></div>
+            </div>
+          </div>
+          <div>
+            <div class="text-xs text-espresso/60 mb-1">Kopya İhtimali</div>
+            <div class="text-2xl font-semibold text-espresso">%{{ studentService.selectedExam()?.copyProb }}</div>
+            <div class="mt-2 h-3 w-full bg-borderGray/50 rounded-full overflow-hidden">
+              <div class="h-full rounded-full" 
+                   [ngStyle]="{ 
+                     width: ((studentService.selectedExam()?.copyProb || 0) + '%'), 
+                     background: (studentService.selectedExam()?.copyProb||0) < 15 ? '#22c55e' : 
+                                (studentService.selectedExam()?.copyProb||0) < 40 ? '#eab308' : '#ef4444' 
+                   }"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

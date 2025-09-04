@@ -1,0 +1,81 @@
+<!-- Sınav Yükle -->
+<div class="h-full p-4 sm:p-6 overflow-auto">
+  <!-- Kapat Butonu -->
+  <div class="flex justify-end mb-4">
+    <button class="btn btn-ghost p-2" (click)="appState.collapseAll()" aria-label="Kapat">
+      <span class="text-lg font-bold text-espresso">✕</span>
+    </button>
+  </div>
+  
+  <!-- Dosya Yükleme Alanı -->
+  <div class="border-2 border-dashed border-borderGray rounded-lg p-8 text-center">
+    <div class="text-sm text-espresso/70">Bırak veya</div>
+    <div class="mt-3 flex items-center justify-center gap-3">
+      <input type="file" accept=".pdf,.png,.jpg,.jpeg" class="hidden" id="file2"/>
+      <label for="file2" class="btn btn-secondary">Dosya Seç</label>
+      <button class="btn btn-primary" (click)="onAnalysisStart()">Analizi Başlat</button>
+      <button class="btn btn-ghost p-2" (click)="appState.collapseAll()" aria-label="İptal">
+        <span class="text-lg font-bold text-espresso">✕</span>
+      </button>
+    </div>
+    <div class="mt-4 h-1 w-full bg-gradient-to-r from-infoSurface via-borderGray to-primary rounded-full animate-[pulse_2s_ease-in-out_infinite]"></div>
+  </div>
+  
+  <!-- LLM Değerlendirme Kuralları -->
+  <div class="mt-4">
+    <label class="text-sm font-medium text-espresso">LLM Değerlendirme Kuralları</label>
+    <textarea 
+      rows="5" 
+      class="mt-2 w-full rounded-md border border-borderGray px-3 py-2 text-sm" 
+      placeholder="Açık uçlu sorularda anahtar kavramlar geçerse kısmi puan ver.&#10;Doğru yöntem-yanlış sonuç için %50 puan uygula.&#10;Çoktan seçmelide net anahtar: yalnız doğru seçenek tam puan.">
+    </textarea>
+  </div>
+  
+  <!-- Sınav Detayları -->
+  <div class="mt-3 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    <!-- Sınav Adı -->
+    <div>
+      <label class="text-sm text-espresso">Sınav Adı</label>
+      <input class="mt-1 w-full rounded-md border border-borderGray px-3 py-2 text-sm"/>
+    </div>
+    
+    <!-- Ders -->
+    <div>
+      <label class="text-sm text-espresso">Ders</label>
+      <select class="mt-1 w-full rounded-md border border-borderGray px-3 py-2 text-sm">
+        <option>Matematik</option>
+        <option>Türkçe</option>
+        <option>Fen</option>
+      </select>
+    </div>
+    
+    <!-- Sınıflar -->
+    <div>
+      <label class="text-sm text-espresso">Sınıf(lar)</label>
+      <div class="mt-1 flex flex-wrap gap-2">
+        <span class="chip">4A</span>
+        <span class="chip">4B</span>
+        <span class="chip">5A</span>
+        <span class="chip">5B</span>
+      </div>
+    </div>
+    
+    <!-- Sınav Türü -->
+    <div>
+      <label class="text-sm text-espresso">Tür</label>
+      <select class="mt-1 w-full rounded-md border border-borderGray px-3 py-2 text-sm">
+        <option>Çoktan Seçmeli</option>
+        <option>Açık Uçlu</option>
+        <option>Karma</option>
+      </select>
+    </div>
+    
+    <!-- Tarih -->
+    <div>
+      <label class="text-sm text-espresso">Tarih</label>
+      <input 
+        type="date" 
+        class="mt-1 w-full rounded-md border border-borderGray px-3 py-2 text-sm"/>
+    </div>
+  </div>
+</div>

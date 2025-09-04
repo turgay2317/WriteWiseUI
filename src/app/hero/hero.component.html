@@ -1,0 +1,116 @@
+<!-- Hero Container - Pin edilecek ana alan -->
+<section #heroContainer class="hero-container" 
+         [attr.aria-label]="'Hero animasyon bölümü'"
+         [attr.aria-hidden]="true">
+  
+  <!-- Video Mode (varsa ve destekleniyorsa) -->
+  <video #videoElement 
+         *ngIf="useVideoMode()"
+         class="hero-video"
+         [poster]="posterSrc"
+         muted
+         playsinline
+         preload="metadata"
+         [attr.aria-hidden]="true">
+    <!-- Video sources component içinde dinamik olarak eklenir -->
+  </video>
+
+  <!-- Canvas Mode (fallback veya ana mod) -->
+  <canvas #canvasElement
+          *ngIf="!useVideoMode()"
+          class="hero-canvas"
+          [attr.aria-hidden]="true">
+    <!-- Canvas desteklenmeyen tarayıcılar için fallback -->
+    <img [src]="posterSrc" alt="" class="hero-fallback-image" />
+  </canvas>
+
+  <!-- Content Overlay - Sol %30-40 alan (erişilebilir içerik) -->
+  <div class="hero-content">
+    <div class="hero-content-inner">
+      
+      <!-- Ana Başlık -->
+      <h1 class="hero-title">
+        Eğitim Teknolojileri
+        <span class="hero-title-accent">Geleceği</span>
+      </h1>
+
+      <!-- Alt Başlık -->
+      <p class="hero-subtitle">
+        Doğal öğrenme deneyimi için tasarlanan akıllı eğitim araçları. 
+        Öğrencilerin potansiyelini ortaya çıkaran, insanî yaklaşımla geliştirilmiş platform.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="hero-actions">
+        <button class="hero-btn hero-btn-primary" 
+                type="button"
+                (click)="ctaPrimaryClick.emit()"
+                [attr.aria-label]="'Ücretsiz deneme başlat'">
+          <span>Ücretsiz Deneyin</span>
+          <svg class="hero-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <button class="hero-btn hero-btn-secondary" 
+                type="button"
+                (click)="ctaSecondaryClick.emit()"
+                [attr.aria-label]="'Demo videoyu izle'">
+          <svg class="hero-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5,3 19,12 5,21"/>
+          </svg>
+          <span>Demo İzleyin</span>
+        </button>
+      </div>
+
+      <!-- Features Indicators -->
+      <div class="hero-features" role="list" aria-label="Ana özellikler">
+        <div class="hero-feature" role="listitem">
+          <div class="hero-feature-icon" [style.background-color]="colors.warmGreen">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </div>
+          <span class="hero-feature-text">Anlık Geri Bildirim</span>
+        </div>
+
+        <div class="hero-feature" role="listitem">
+          <div class="hero-feature-icon" [style.background-color]="colors.warmGreen">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </div>
+          <span class="hero-feature-text">Kişisel Öğrenim Yolu</span>
+        </div>
+
+        <div class="hero-feature" role="listitem">
+          <div class="hero-feature-icon" [style.background-color]="colors.warmGreen">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </div>
+          <span class="hero-feature-text">Doğal Etkileşim</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Progress Indicator (opsiyonel, debug için) -->
+  <div class="hero-progress" 
+       *ngIf="false"
+       [attr.aria-hidden]="true">
+    <div class="hero-progress-bar" 
+         [style.width.%]="(currentFrame() / 100) * 100">
+    </div>
+  </div>
+
+</section>
+
+<!-- Scroll hint (reduced motion durumunda gizli) -->
+<div class="scroll-hint" 
+     *ngIf="!scrollService.isReducedMotion"
+     [attr.aria-hidden]="true">
+  <div class="scroll-hint-line"></div>
+  <span class="scroll-hint-text">Keşfetmek için kaydırın</span>
+</div>
