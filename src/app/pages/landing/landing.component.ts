@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { HeroScrollSceneComponent } from '../../hero/hero.component';
+import { Router, RouterModule } from '@angular/router';
+import { HeroScrollSceneComponent } from '../../components/shared/hero/hero.component';
+import { FooterComponent } from '../../components/shared/footer/footer.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, HeroScrollSceneComponent],
+  imports: [CommonModule, RouterModule, HeroScrollSceneComponent, FooterComponent],
   template: `
     <!-- Ana Landing Page -->
     <main class="landing-page">
@@ -15,14 +16,57 @@ import { HeroScrollSceneComponent } from '../../hero/hero.component';
       <app-hero-scroll-scene 
         [posterSrc]="'assets/poster.svg'"
         (ctaPrimaryClick)="onGetStarted()"
-        (ctaSecondaryClick)="onWatchDemo()">
+        (ctaSecondaryClick)="onWatchDemo()"
+        (onRegisterClick)="onRegister()"
+        (pricingClick)="onPricing()"
+        (featuresClick)="onFeatures()"
+        (contactClick)="onContactUs()">
       </app-hero-scroll-scene>
 
+      <!-- Hero içindeki topbar'a taşındı -->
+
       <!-- Features Section -->
-      <section class="features-section">
+      <section class="features-section" id="features">
         <div class="container">
+          <div class="features-header">
+            <h2>Özellikler</h2>
+            <p>Öğretmenlerin işini kolaylaştıran, öğrencilerin öğrenmesini hızlandıran şık ve yalın araçlar.</p>
+          </div>
+
+          <!-- Featured row -->
+          <div class="features-featured">
+            <article class="feature-hero-card">
+              <div class="feature-hero-content">
+                <h3 class="feature-hero-title">Akıllı Değerlendirme Motoru</h3>
+                <p class="feature-hero-text">Yanıtları anında işler, objektif kriterlerle puanlar ve geliştirici geri bildirimler üretir.</p>
+                <div class="feature-hero-meta">
+                  <span class="badge">%3.5x hız</span>
+                  <span class="badge badge-outline">Tutarlı ölçme</span>
+                </div>
+              </div>
+              <div class="feature-visual-wrap">
+                <img src="assets/poster.svg" alt="Değerlendirme görseli" class="feature-visual"/>
+              </div>
+            </article>
+
+            <article class="feature-hero-card alt">
+              <div class="feature-hero-content">
+                <h3 class="feature-hero-title">Sınıf Analitiği ve Yönetim</h3>
+                <p class="feature-hero-text">İlerlemeyi takip edin, riskteki öğrencileri tespit edin ve hedefli destek verin.</p>
+                <div class="feature-hero-meta">
+                  <span class="badge">Gerçek zamanlı</span>
+                  <span class="badge badge-outline">Ölçeklenebilir</span>
+                </div>
+              </div>
+              <div class="feature-visual-wrap small">
+                <img src="assets/graduation-cap.svg" alt="Analitik görseli" class="feature-visual"/>
+              </div>
+            </article>
+          </div>
+
+          <!-- All features grid -->
+          <h3 class="features-subtitle">Tüm Özellikler</h3>
           <div class="features-grid">
-            
             <div class="feature-card">
               <div class="feature-icon" [style.background-color]="'#80b48c'">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -30,7 +74,7 @@ import { HeroScrollSceneComponent } from '../../hero/hero.component';
                 </svg>
               </div>
               <h3>Akıllı Değerlendirme</h3>
-              <p>Yapay zeka destekli otomatik değerlendirme sistemi ile öğrenci performansını anında analiz edin.</p>
+              <p>Yapay zeka destekli otomatik değerlendirme ile net ve hızlı sonuçlar.</p>
             </div>
 
             <div class="feature-card">
@@ -40,7 +84,7 @@ import { HeroScrollSceneComponent } from '../../hero/hero.component';
                 </svg>
               </div>
               <h3>Sınıf Yönetimi</h3>
-              <p>Tüm sınıflarınızı tek platformda yönetin, öğrenci ilerlemelerini takip edin.</p>
+              <p>Tüm sınıflarınızı tek panelde yönetin, görevleri düzenleyin.</p>
             </div>
 
             <div class="feature-card">
@@ -54,9 +98,40 @@ import { HeroScrollSceneComponent } from '../../hero/hero.component';
                 </svg>
               </div>
               <h3>Kolay Sınav Yükleme</h3>
-              <p>Çeşitli formatlarda sınav yükleyin, otomatik işleme ile sonuçları dakikalar içinde alın.</p>
+              <p>PDF ya da görselleri yükleyin, sistem saniyeler içinde işler.</p>
             </div>
 
+            <div class="feature-card">
+              <div class="feature-icon" [style.background-color]="'#80b48c'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+              </div>
+              <h3>Rubrik Desteği</h3>
+              <p>Özelleştirilebilir rubriklerle adil ve şeffaf değerlendirme.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon" [style.background-color]="'#a0bfb9'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 12h18"/>
+                  <path d="M12 3v18"/>
+                </svg>
+              </div>
+              <h3>Çoklu Sınıf</h3>
+              <p>Birden fazla sınıfı aynı anda ve düzenli biçimde yönetin.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon" [style.background-color]="'#c0cfd0'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c0 .66.26 1.3.73 1.77.47.47 1.11.73 1.77.73"/>
+                </svg>
+              </div>
+              <h3>Entegrasyonlar</h3>
+              <p>Okul sistemleri ve bulut depolama hizmetleriyle uyumlu çalışır.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -85,43 +160,7 @@ import { HeroScrollSceneComponent } from '../../hero/hero.component';
       </section>
 
       <!-- Footer -->
-      <footer class="landing-footer">
-        <div class="container">
-          <div class="footer-content">
-            <div class="footer-brand">
-              <div class="footer-logo">
-                <div class="logo-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2l3 6 6 .9-4.5 4.3 1.1 6.3L12 16.9 6.4 19.5l1.1-6.3L3 8.9 9 8z"/>
-                  </svg>
-                </div>
-                <span>EduTech Platform</span>
-              </div>
-              <p>Doğal öğrenme deneyimi için tasarlanan akıllı eğitim araçları.</p>
-            </div>
-            
-            <div class="footer-links">
-              <div class="footer-section">
-                <h4>Platform</h4>
-                <a href="#" (click)="onGetStarted()">Öğretmen Paneli</a>
-                <a href="#" (click)="onWatchDemo()">Demo</a>
-                <a href="#">Özellikler</a>
-              </div>
-              
-              <div class="footer-section">
-                <h4>Destek</h4>
-                <a href="#" (click)="onContactUs()">İletişim</a>
-                <a href="#">Yardım</a>
-                <a href="#">Dokümantasyon</a>
-              </div>
-            </div>
-          </div>
-          
-          <div class="footer-bottom">
-            <p>&copy; 2025 EduTech Platform. Tüm hakları saklıdır.</p>
-          </div>
-        </div>
-      </footer>
+      <app-footer></app-footer>
 
     </main>
   `,
@@ -131,19 +170,32 @@ export class LandingComponent {
   constructor(private router: Router) {}
 
   onGetStarted(): void {
-    // Öğretmen paneline yönlendir
-    this.router.navigate(['/dashboard']);
+    // Öğretmen girişi
+    this.router.navigate(['/login'], { queryParams: { role: 'teacher' } });
   }
 
   onWatchDemo(): void {
-    // Demo modal açabilir veya demo sayfasına gidebilir
-    console.log('Demo izleme tıklandı');
-    // Modal implementation veya video player
+    // Öğrenci girişi
+    this.router.navigate(['/login'], { queryParams: { role: 'student' } });
   }
 
   onContactUs(): void {
     // İletişim sayfasına yönlendir veya modal aç
     console.log('İletişim tıklandı');
     // this.router.navigate(['/contact']);
+  }
+
+  onPricing(): void {
+    this.router.navigate(['/pricing']);
+  }
+
+  onRegister(): void {
+    // Kayıt sayfasına yönlendir
+    this.router.navigate(['/register']);
+  }
+
+  onFeatures(): void {
+    // Ayrı Özellikler sayfasına yönlendir
+    this.router.navigate(['/features']);
   }
 }

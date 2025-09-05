@@ -5,18 +5,34 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#ea940c',
-        'primary-hover': '#c57a06',
-        'primary-pressed': '#a76404',
-        'primary-disabled': 'rgba(234,148,12,0.4)',
-        espresso: '#1f0104',
-        infoSurface: '#c8d7f6',
-        baseBg: '#f8f9fa',
-        borderGray: '#b9bdc7',
-        success: '#1faa52',
+        // Ana renkler - Landing page ile uyumlu
+        sage: '#a0bfb9',          // Ana yeşil-gri rengi
+        'sage-hover': '#8fa9a3',
+        'sage-pressed': '#7e9892',
+        coolGray: '#c0cfd0',      // Soğuk gri
+        warmGreen: '#80b48c',     // Sıcak yeşil accent
+        'warmGreen-hover': '#6fa278',
+        
+        // Primary renkleri warm green yapıyoruz
+        primary: '#80b48c',
+        'primary-hover': '#6fa278',
+        'primary-pressed': '#5e9167',
+        'primary-disabled': 'rgba(128,180,140,0.4)',
+        
+        // Text ve background renkleri
+        espresso: '#1a1a1a',       // Koyu metin
+        mediumText: '#4a4a4a',
+        lightText: '#666666',
+        infoSurface: '#e8f3f0',    // Sage-based açık yüzey
+        baseBg: '#f5f5f5',         // Açık gri arka plan
+        borderGray: '#d1ddd9',     // Sage-based border
+        
+        // Status renkleri
+        success: '#80b48c',
         error: '#e23b3b',
         info: '#7aa5f9',
-        // Dark scheme
+        
+        // Dark scheme (opsiyonel)
         darkBg: '#101214',
         darkCard: '#15181d',
         darkText: '#eef2f6',
@@ -27,8 +43,9 @@ module.exports = {
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       boxShadow: {
-        'soft-card': '0 6px 18px rgba(31,1,4,0.06)',
-        'soft-card-lg': '0 10px 30px rgba(31,1,4,0.08)'
+        'soft-card': '0 4px 20px rgba(160,191,185,0.08)',
+        'soft-card-lg': '0 8px 30px rgba(160,191,185,0.15)',
+        'soft-card-hover': '0 12px 40px rgba(160,191,185,0.18)'
       },
       borderRadius: {
         card: '18px',

@@ -11,25 +11,25 @@
 }
 
 @layer components {
-  .btn { @apply inline-flex items-center justify-center gap-2 rounded-md px-3.5 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2; }
-  .btn-primary { @apply bg-primary text-espresso hover:bg-primary-hover active:bg-primary-pressed disabled:bg-primary disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-primary; }
-  .btn-secondary { @apply bg-white text-espresso border border-borderGray hover:bg-slate-50 active:bg-slate-100 focus-visible:ring-espresso; }
-  .btn-ghost { @apply text-espresso hover:bg-slate-100 active:bg-slate-200 focus-visible:ring-espresso; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2; }
+  .btn-primary { @apply bg-warmGreen text-white hover:bg-warmGreen-hover active:bg-primary-pressed disabled:bg-primary disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-warmGreen shadow-sm hover:shadow-md; }
+  .btn-secondary { @apply bg-white text-espresso border border-borderGray hover:bg-sage/5 hover:border-sage active:bg-sage/10 focus-visible:ring-sage; }
+  .btn-ghost { @apply text-espresso hover:bg-sage/10 active:bg-sage/20 focus-visible:ring-sage; }
 
-  .chip { @apply inline-flex items-center rounded-full border border-borderGray bg-white px-3 py-1 text-xs font-medium text-espresso/80 hover:bg-slate-50; }
-  .chip-active { @apply bg-infoSurface text-espresso border-borderGray; }
+  .chip { @apply inline-flex items-center rounded-full border border-borderGray bg-white px-3 py-1 text-xs font-medium text-mediumText hover:bg-sage/5 transition-colors; }
+  .chip-active { @apply bg-sage/20 text-espresso border-sage/30 font-semibold; }
 
-  .card { @apply bg-white dark:bg-darkCard border border-borderGray/80 dark:border-white/10 rounded-card shadow-soft-card transition-[transform,box-shadow] will-change-transform; }
-  .card:hover { @apply -translate-y-0.5 shadow-soft-card-lg; }
+  .card { @apply bg-white dark:bg-darkCard border border-borderGray/60 dark:border-white/10 rounded-2xl shadow-soft-card transition-all duration-300; }
+  .card:hover { @apply -translate-y-1 shadow-soft-card-hover border-sage/20; }
   .divider-h { @apply w-px self-stretch bg-borderGray; }
   .divider-v { @apply h-px w-full bg-borderGray; }
 
-  .skeleton { background: linear-gradient(90deg, rgba(185,189,199,0.2) 25%, rgba(185,189,199,0.35) 37%, rgba(185,189,199,0.2) 63%); background-size: 700px 100%; @apply animate-shimmer rounded; }
+  .skeleton { background: linear-gradient(90deg, rgba(160,191,185,0.15) 25%, rgba(160,191,185,0.25) 37%, rgba(160,191,185,0.15) 63%); background-size: 700px 100%; @apply animate-shimmer rounded-lg; }
 
   .ripple-container { position: relative; overflow: hidden; }
-  .ripple-circle { position: absolute; border-radius: 9999px; pointer-events: none; background: rgba(0,0,0,0.15); transform: scale(0); animation: ripple 500ms ease-out forwards; }
+  .ripple-circle { position: absolute; border-radius: 9999px; pointer-events: none; background: rgba(160,191,185,0.25); transform: scale(0); animation: ripple 600ms ease-out forwards; }
 
-  .appbar { @apply sticky top-0 z-30 w-full bg-white/90 dark:bg-darkCard/80 backdrop-blur border-b border-borderGray/70 dark:border-white/10; }
+  .appbar { @apply sticky top-0 z-30 w-full bg-white/95 dark:bg-darkCard/80 backdrop-blur-md border-b border-sage/10 dark:border-white/10 shadow-sm; }
   .appbar-inner { @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-4; }
 
   /* Layout fixes for responsive design */

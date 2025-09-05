@@ -1,20 +1,125 @@
 // Dashboard component için özel stiller
-// Ana stilleri styles.css'den inherit ediyor
+// Landing page renk paleti ile uyumlu
 
+// Renkler
+$sage: #a0bfb9;
+$cool-gray: #c0cfd0;
+$warm-green: #80b48c;
+$light-gray: #f5f5f5;
+$white: #ffffff;
+$info-blue: #7aa5f9;
+
+// Layout
 .layout-container {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  min-height: calc(100vh - 4rem);
+  background: linear-gradient(135deg, 
+    rgba($sage, 0.02) 0%, 
+    rgba(white, 1) 15%,
+    rgba($cool-gray, 0.03) 50%,
+    rgba($warm-green, 0.02) 85%,
+    rgba($light-gray, 0.5) 100%);
+  height: calc(100vh - 5rem);
+  max-height: calc(100vh - 5rem);
+  overflow: hidden;
+  position: relative;
+  
+  // Subtle texture overlay
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba($sage, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba($warm-green, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba($cool-gray, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+  // Cards background container - Hero section'daki dark mode container'dan esinlenildi
+.cards-background-container {
+  position: relative;
+  padding: 2rem;
+  border-radius: 1.25rem;
+  
+  // Hero'daki dark mode gradient - aynısı
+  background: linear-gradient(
+    135deg, 
+    rgba(#1a1a1a, 0.95) 0%, 
+    rgba(#2a2a2a, 0.9) 50%,
+    rgba(#1a1a1a, 0.95) 100%
+  );
+  
+  // Hero stilleriyle uyumlu gölge
+  box-shadow: 
+    0 8px 32px rgba($sage, 0.08),
+    0 4px 16px rgba($cool-gray, 0.12);
+  
+  // Hero'daki backdrop blur
+  backdrop-filter: blur(8px);
+  
+  animation: containerFadeIn 0.8s ease-out;
+  
+  // Hero'daki subtle border etkisi
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  // Glass morphism overlay - Hero ile uyumlu
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 1.25rem;
+    background: linear-gradient(135deg, 
+      rgba($sage, 0.05) 0%, 
+      transparent 50%, 
+      rgba($warm-green, 0.08) 100%);
+    pointer-events: none;
+  }
+  
+  // Kartları beyaz tutmak için çocuk elementlerin z-index'ini ayarla
+  .responsive-grid {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+@keyframes containerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 // Dashboard grid animasyonları
 .responsive-grid {
-  animation: fadeInUp 0.6s ease-out;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+  position: relative;
+  z-index: 1;
+  
+  // Grid items staggered animation
+  .dashboard-card {
+    animation: cardFadeIn 0.6s ease-out both;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+  }
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -22,17 +127,111 @@
   }
 }
 
-// Dashboard card hover efektleri
-.card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Dashboard özel kartlar - Dark container içinde bright contrast
+.dashboard-card {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.98) 0%, 
+    rgba(255, 255, 255, 0.95) 100%);
+  border-radius: 1.25rem;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  backdrop-filter: blur(10px);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 1rem;
+    padding: 1px;
+    background: linear-gradient(135deg, transparent, rgba($sage, 0.1));
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
   
   &:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 12px 40px rgba(160, 191, 185, 0.15);
+    box-shadow: 
+      0 16px 48px rgba(0, 0, 0, 0.18),
+      0 4px 16px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+    
+    &::before {
+      opacity: 1;
+    }
+    
+    // Glow efekti
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 1.5rem;
+      background: linear-gradient(135deg, 
+        rgba($sage, 0.3) 0%,
+        rgba($warm-green, 0.2) 50%,
+        rgba($cool-gray, 0.25) 100%);
+      z-index: -1;
+      opacity: 0.6;
+    }
   }
   
   &:active {
     transform: translateY(-2px) scale(1.01);
+  }
+}
+
+// Welcome section animasyon ve styling
+.welcome-section {
+  animation: slideDown 0.5s ease-out;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent 0%,
+      rgba($sage, 0.4) 20%,
+      rgba($warm-green, 0.6) 50%,
+      rgba($sage, 0.4) 80%,
+      transparent 100%);
+    border-radius: 1px;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -44,11 +243,11 @@
 @keyframes slideInFromOrigin {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.95) translateY(20px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateY(0);
   }
 }
 
@@ -69,19 +268,183 @@
   transform-origin: bottom right;
 }
 
+// Card içindeki badge ve indicator stilleri
+.status-indicator {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Kart hover efektleri için glow
+.card-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at center, rgba($sage, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.dashboard-card:hover .card-glow {
+  opacity: 1;
+}
+
 // Responsive adjustments for dashboard
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .layout-container {
-    padding: 1rem;
+    padding: 0.75rem;
+    height: calc(100vh - 4rem);
+    max-height: calc(100vh - 4rem);
+    overflow: hidden;
+  }
+  
+  .cards-background-container {
+    padding: 1.25rem;
+    border-radius: 1.5rem;
+    margin: 0 0.5rem;
+    
+    // Mobile'da hero dark gradient ile uyumlu
+    background: linear-gradient(
+      135deg, 
+      rgba(#1a1a1a, 0.92) 0%, 
+      rgba(#2a2a2a, 0.88) 50%,
+      rgba(#1a1a1a, 0.92) 100%
+    );
   }
   
   .responsive-grid {
     gap: 1rem;
-    height: auto;
-    grid-rows: auto;
+    min-height: auto !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: repeat(4, minmax(140px, auto));
   }
   
-  .card {
+  .dashboard-card {
+    min-height: 140px;
     padding: 1.5rem !important;
+    
+    .h-24 {
+      height: 5rem;
+      width: 5rem;
+      
+      svg {
+        width: 48px;
+        height: 48px;
+      }
+    }
+    
+    h3 {
+      font-size: 1.125rem;
+    }
   }
+}
+
+// Small tablet (640px - 768px)
+@media (min-width: 640px) and (max-width: 768px) {
+  .cards-background-container {
+    padding: 1.5rem;
+    margin: 0 1rem;
+    
+    // Tablet'te hero gradient ile uyumlu
+    background: linear-gradient(
+      135deg, 
+      rgba(#1a1a1a, 0.94) 0%, 
+      rgba(#2a2a2a, 0.89) 50%,
+      rgba(#1a1a1a, 0.94) 100%
+    );
+  }
+  
+  .responsive-grid {
+    gap: 1.25rem;
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-rows: repeat(2, minmax(160px, auto));
+  }
+  
+  .dashboard-card {
+    min-height: 160px;
+    
+    .h-24 {
+      height: 5.5rem;
+      width: 5.5rem;
+      
+      svg {
+        width: 52px;
+        height: 52px;
+      }
+    }
+  }
+}
+
+// Tablet görünümü (769px - 1024px)
+@media (min-width: 769px) and (max-width: 1024px) {
+  .responsive-grid {
+    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, minmax(180px, auto));
+  }
+  
+  .dashboard-card {
+    min-height: 180px;
+  }
+}
+
+// Desktop (1024px+)
+@media (min-width: 1024px) {
+  .cards-background-container {
+    padding: 2.5rem;
+    margin: 0 2rem;
+    
+    // Desktop'ta hero dark gradient - orijinal
+    background: linear-gradient(
+      135deg, 
+      rgba(#1a1a1a, 0.95) 0%, 
+      rgba(#2a2a2a, 0.9) 50%,
+      rgba(#1a1a1a, 0.95) 100%
+    );
+  }
+  
+  .responsive-grid {
+    gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, minmax(200px, 220px));
+  }
+  
+  .dashboard-card {
+    min-height: 200px;
+  }
+}
+
+// Smooth transitions for all interactive elements
+* {
+  transition-property: transform, box-shadow, background-color;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Gradient backgrounds for different card types
+.gradient-sage {
+  background: linear-gradient(135deg, rgba($sage, 0.05) 0%, rgba($sage, 0.1) 100%);
+}
+
+.gradient-gray {
+  background: linear-gradient(135deg, rgba($cool-gray, 0.05) 0%, rgba($cool-gray, 0.1) 100%);
+}
+
+.gradient-green {
+  background: linear-gradient(135deg, rgba($warm-green, 0.05) 0%, rgba($warm-green, 0.1) 100%);
+}
+
+.gradient-blue {
+  background: linear-gradient(135deg, rgba($info-blue, 0.05) 0%, rgba($info-blue, 0.1) 100%);
 }
