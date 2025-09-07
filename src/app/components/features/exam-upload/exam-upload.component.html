@@ -1,0 +1,119 @@
+<!-- Sınav Yükle -->
+<div class="h-full max-h-full overflow-auto px-4 lg:px-6 pt-0 lg:pt-0 pb-4">
+  <!-- Kapat Butonu -->
+  <div class="flex justify-end mb-2">
+    <button class="btn btn-ghost p-2" (click)="appState.collapseAll()" aria-label="Kapat">
+      <span class="text-lg font-bold text-espresso">✕</span>
+    </button>
+  </div>
+
+  <!-- Sınav Yükleme Formu -->
+  <div class="max-w-3xl mx-auto">
+    <h2 class="text-xl font-bold text-espresso mb-6">Sınav Yükle</h2>
+    
+    <!-- Dosya Yükleme Alanı (Drag & Drop) -->
+    <div
+      class="border-2 border-dashed border-borderGray rounded-lg p-8 text-center transition-colors mb-6"
+      [ngClass]="{ 'border-primary bg-primary/5': isDraggingOver, 'opacity-60 pointer-events-none': isUploading }"
+      (drop)="onDrop($event)"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      aria-label="Sınav dosyası yükleme alanı"
+      role="region"
+    >
+      <div class="text-sm text-espresso/70" *ngIf="!hasSelectedFile">Dosyanızı buraya bırakın veya</div>
+      <div class="mt-3 flex flex-wrap items-center justify-center gap-3">
+        <input type="file" accept=".pdf,.png,.jpg,.jpeg" class="hidden" id="exam-file-input" (change)="onFileInputChange($event)"/>
+        <label for="exam-file-input" class="btn btn-secondary">Dosya Seç</label>
+        <button class="btn btn-secondary btn-outline" (click)="clearSelectedFile()" [disabled]="isUploading" *ngIf="hasSelectedFile">Temizle</button>
+      </div>
+
+      <!-- Seçilen dosya özeti -->
+      <div class="mt-4 flex items-center justify-center gap-3" *ngIf="hasSelectedFile">
+        <div class="text-sm text-espresso bg-slate-50 border border-borderGray rounded-md px-3 py-2">
+          {{ selectedFile?.name }} · {{ selectedFile ? formatFileSize(selectedFile.size) : '' }}
+        </div>
+      </div>
+
+      <!-- Yardım Metni -->
+      <div class="mt-3 text-xs text-espresso/60">
+        PDF, PNG, JPG dosyaları desteklenir. Maksimum 25MB.
+      </div>
+    </div>
+    
+    <!-- LLM Değerlendirme Kuralları -->
+    <div class="mb-6">
+      <label class="text-sm font-semibold text-black">LLM Değerlendirme Kuralları</label>
+      <textarea
+        rows="4"
+        [(ngModel)]="evaluationRules"
+        class="mt-2 w-full rounded-md border border-borderGray px-3 py-2 text-sm"
+        placeholder="Açık uçlu sorularda anahtar kavramlar geçerse kısmi puan ver.&#10;Doğru yöntem-yanlış sonuç için %50 puan uygula.&#10;Çoktan seçmelide net anahtar: yalnız doğru seçenek tam puan."
+        [disabled]="isUploading"
+      ></textarea>
+    </div>
+
+    <!-- Sınav Detayları -->
+    <div class="grid sm:grid-cols-2 gap-4 mb-6">
+      <!-- Sınıf Seçimi -->
+      <div>
+        <label class="text-sm font-semibold text-black">Sınıf Seçin</label>
+        <select 
+          [(ngModel)]="selectedSinifId" 
+          (ngModelChange)="onSinifChange()"
+          class="mt-1 w-full rounded-md border border-borderGray px-3 py-2 text-sm"
+          [disabled]="isUploading"
+        >
+          <option value="">Sınıf seçiniz</option>
+          <option *ngFor="let sinif of siniflar" [value]="sinif.id">
+            {{ sinif.ad }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Ders Seçimi -->
+      <div>
+        <label class="text-sm font-semibold text-black">Ders Seçin</label>
+        <select 
+          [(ngModel)]="selectedDersId" 
+          class="mt-1 w-full rounded-md border border-borderGray px-3 py-2 text-sm"
+          [disabled]="isUploading || !selectedSinifId"
+        >
+          <option value="">Ders seçiniz</option>
+          <option *ngFor="let ders of dersler" [value]="ders.id">
+            {{ ders.ders_adi || ders.ad }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Kaydet Butonu -->
+    <div class="flex justify-center">
+      <button 
+        class="btn bg-primary-pressed hover:bg-[#4b7454] text-white px-8 py-3 flex items-center gap-2"
+        (click)="onSaveExam()" 
+        [disabled]="!hasSelectedFile || !selectedDersId || !selectedSinifId || isUploading"
+      >
+        <!-- Spinner -->
+        <div *ngIf="isUploading" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+        <span *ngIf="!isUploading">Sınav Analizini Başlat</span>
+        <span *ngIf="isUploading">Yükleniyor...</span>
+      </button>
+    </div>
+
+    <!-- Yükleme İlerleme Çubuğu -->
+    <div class="mt-4 h-2 w-full bg-gray-100 rounded-full overflow-hidden" *ngIf="isUploading">
+      <div class="h-full bg-primary transition-all" [style.width.%]="uploadProgress"></div>
+    </div>
+
+    <!-- Hata Mesajı -->
+    <div class="mt-4 text-center text-red-600 text-sm" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Başarı Mesajı -->
+    <div class="mt-4 text-center text-green-600 text-sm" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,104 @@
+<!-- Yüklediğim Sınavlar -->
+<div class="h-full max-h-full px-2 lg:px-3 pt-0 pb-2 overflow-hidden">
+  <!-- Kapat Butonu -->
+  <div class="flex justify-end -mb-1 mt-1">
+    <button class="btn btn-ghost px-1 py-0" (click)="appState.collapseAll()" aria-label="Kapat">
+      <span class="text-base font-bold text-espresso">✕</span>
+    </button>
+  </div>
+  
+  <!-- Üst Kısım: Liste + Özet + Sorular (öğrenciler modülüne benzer 3 kolon) -->
+  <div class="grid gap-4 lg:grid-cols-2">
+    <!-- Sol: Yüklenen Sınavlar Listesi -->
+    <section class="flexible-content min-w-0 h-full flex flex-col">
+      <div class="flex items-center justify-between mb-2 px-1">
+        <h4 class="text-base font-semibold text-espresso">Yüklenen Sınavlar</h4>
+      </div>
+      <!-- Sorting Header - Öğrencilerdeki gibi -->
+      <div class="flex bg-gray-50 text-sm font-medium text-espresso/70 border border-borderGray rounded-t-lg mb-0">
+        <button class="flex-1 px-3 py-2 text-left hover:bg-gray-100 transition-colors rounded-tl-lg" (click)="uploadedExamService.sortUploadedBy('subject')" [ngClass]="{'bg-primary/10': uploadedExamService.uploadedSortBy() === 'subject'}">
+          <span class="flex items-center gap-1">
+            Sınav
+            <span *ngIf="uploadedExamService.uploadedSortBy() === 'subject'" class="text-primary">{{ uploadedExamService.uploadedSortOrder() === 'asc' ? '↑' : '↓' }}</span>
+          </span>
+        </button>
+        <button class="flex-1 px-3 py-2 text-left hover:bg-gray-100 transition-colors border-l border-borderGray" (click)="uploadedExamService.sortUploadedBy('date')" [ngClass]="{'bg-primary/10': uploadedExamService.uploadedSortBy() === 'date'}">
+          <span class="flex items-center gap-1">
+            Tarih
+            <span *ngIf="uploadedExamService.uploadedSortBy() === 'date'" class="text-primary">{{ uploadedExamService.uploadedSortOrder() === 'asc' ? '↑' : '↓' }}</span>
+          </span>
+        </button>
+      </div>
+      <!-- Liste İçeriği -->
+      <div class="h-[344px] overflow-y-auto divide-y divide-borderGray/60 border-l border-r border-b border-borderGray rounded-b-lg">
+        <div *ngIf="uploadedExamService.sortedUploadedExams().length===0" class="h-14 grid place-items-center text-espresso/60">
+          Liste boş
+        </div>
+        <button 
+          *ngFor="let exam of uploadedExamService.sortedUploadedExams(); index as i" 
+          class="group w-full text-left h-14 px-3 relative" 
+          [ngClass]="{'bg-infoSurface/30': uploadedExamService.selectedUpload()?.id===exam.id}"
+          (click)="uploadedExamService.selectUploadedExam(exam)">
+          <div class="flex items-center justify-between h-full">
+            <div class="flex-1 min-w-0">
+              <div class="text-[16px] font-semibold text-espresso truncate">{{ exam.subject }}</div>
+              <div class="text-sm text-espresso/60 truncate">{{ exam.clazz }}</div>
+            </div>
+            <div class="text-sm text-espresso/70 whitespace-nowrap ml-3">{{ exam.date }}</div>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Sağ: Sorular (lg ve üzeri) -->
+    <section class="flexible-content hidden lg:block h-full flex flex-col" [class.animate-slide-in]="uploadedExamService.selectedUpload()">
+      <div *ngIf="uploadedExamService.selectedUpload()" class="flex-1 flex flex-col">
+        <div class="text-base font-semibold text-espresso mb-2">{{ uploadedExamService.selectedUpload()?.date }} {{ uploadedExamService.selectedUpload()?.subject }} Sınavı</div>
+        <div class="h-[380px] overflow-y-auto rounded-lg border border-borderGray">
+          <div class="space-y-3 p-3">
+            <div *ngIf="uploadedExamService.currentQuestion() as q; else noQuestion">
+              <div class="text-lg font-semibold text-espresso">{{ (uploadedExamService.currentQuestionIdx()+1) }}. Soru: {{ q.text }}</div>
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-2">
+                <div class="lg:col-span-2">
+                  <div class="text-sm font-semibold text-espresso mb-2">Öğrenci Cevapları</div>
+                  <div class="space-y-2">
+                    <div *ngFor="let group of q.groups; index as gi" class="bg-slate-50 p-3 rounded-lg">
+                      <div class="text-sm font-medium text-espresso mb-1">Grup {{ gi+1 }} — {{ group.count }} kişi</div>
+                      <ul class="list-disc pl-4 text-sm text-espresso/80">
+                        <li *ngFor="let answer of group.answers">{{ answer }}</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <div class="bg-blue-50 p-3 rounded-lg">
+                    <div class="text-sm font-semibold text-blue-800">LLM Puanı</div>
+                    <div class="text-xl font-bold text-blue-900">{{ q.llmScore }} / {{ q.maxScore }}</div>
+                    <div class="text-xs text-blue-700 mt-1">{{ q.rationale }}</div>
+                  </div>
+                  <div class="bg-green-50 p-3 rounded-lg">
+                    <div class="text-sm font-semibold text-green-800 mb-2">Öğretmen Puanı</div>
+                    <div class="flex items-center gap-2 mb-2">
+                      <button class="btn btn-secondary text-xs px-2 py-1" (click)="uploadedExamService.adjustTeacherScore(-1)">-1</button>
+                      <input type="number" class="w-16 rounded-md border border-borderGray px-2 py-1 text-sm text-center" [value]="q.teacherScore" (input)="uploadedExamService.setTeacherScore(+$any($event.target).value)"/>
+                      <button class="btn btn-secondary text-xs px-2 py-1" (click)="uploadedExamService.adjustTeacherScore(1)">+1</button>
+                    </div>
+                    <div class="text-xs text-green-700">Maksimum: {{ q.maxScore }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-2">
+                <button class="btn btn-primary px-3 py-2" (click)="uploadedExamService.prevQuestion()">← Önceki</button>
+                <div class="text-sm font-semibold text-espresso">Soru {{ uploadedExamService.currentQuestionIdx()+1 }} / {{ uploadedExamService.currentQuestions().length }}</div>
+                <button class="btn btn-primary px-3 py-2" (click)="uploadedExamService.nextQuestion()">Sonraki →</button>
+              </div>
+            </div>
+            <ng-template #noQuestion>
+              <div class="text-sm text-espresso/70">Soru bulunamadı.</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

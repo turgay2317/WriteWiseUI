@@ -1,0 +1,176 @@
+// Login page styles - includes register card base styles
+
+// Base register card styles (moved from deleted register component)
+.register-card {
+  background: #1a1d23;
+  border: 1px solid rgba(160, 191, 185, 0.2);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.login-card {
+  max-width: none; // üst sınırı kaldır
+  width: min(860px, 92vw); // hedef genişlik
+  padding: 1.5rem 1.25rem; // dikeyde çok az arttırıldı
+}
+
+/* Daha yüksek özgüllükle (specificity) max-width kesin uygulasın */
+.register-card.login-card { max-width: none; width: min(400px, 92vw); }
+
+// Form grid styles
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.login-grid { grid-template-columns: 1fr; }
+
+// Form field styles
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-field label {
+  color: #eef2f6;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-field input {
+  background: #0f1113;
+  border: 1px solid rgba(160, 191, 185, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: #eef2f6;
+  font-size: 1rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-field input:focus {
+  outline: none;
+  border-color: #a0bfb9;
+  box-shadow: 0 0 0 3px rgba(160, 191, 185, 0.1);
+}
+
+.form-field input::placeholder {
+  color: #aeb7c2;
+}
+
+// Button styles
+.btn-continue {
+  background: linear-gradient(135deg, #a0bfb9 0%, #80b48c 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.8rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+}
+
+.btn-continue:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(160, 191, 185, 0.3);
+}
+
+.btn-continue:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-continue.primary {
+  background: linear-gradient(135deg, #a0bfb9 0%, #80b48c 100%);
+}
+
+// Grid column spans
+.col-span-2 {
+  grid-column: span 2;
+}
+
+.login-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+// Link styles
+.link {
+  background: none;
+  border: none;
+  color: #a0bfb9;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.link:hover {
+  color: #80b48c;
+}
+
+.link.subtle {
+  background: none;
+  border: none;
+  color: #aeb7c2; // register koyu kart ikincil
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link.small { font-size: .9rem; }
+
+.label-row { display: flex; align-items: center; justify-content: space-between; }
+
+.input-with-icon { position: relative; }
+.input-with-icon input { width: 100%; padding-right: 2.25rem; }
+.icon-btn { position: absolute; right: .55rem; top: 50%; transform: translateY(-50%); background: none; border: 0; color: #aeb7c2; display: grid; place-items: center; height: 28px; width: 28px; cursor: pointer; }
+.icon-btn:hover { color: #ffffff; }
+
+.divider { display: flex; align-items: center; gap: 1rem; color: #aeb7c2; opacity: .9; margin: .25rem 0 .5rem; }
+.divider::before, .divider::after { content: ""; height: 1px; background: rgba(160,191,185,.25); flex: 1; }
+
+.btn-alt {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  color: #eef2f6;
+  background: #0f1113;
+  border: 1px solid rgba(160,191,185,.28);
+  border-radius: .6rem;
+  padding: .8rem 1rem;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
+}
+.btn-alt:hover { transform: translateY(-1px); border-color: rgba(160,191,185,.5); background: #101316; }
+
+.error-message {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  border: 1px solid #fecaca;
+}
+
+@media (max-width: 768px){
+  .login-card { max-width: 100%; }
+  .login-actions { flex-direction: column; align-items: stretch; }
+  .link.subtle { align-self: center; }
+}
+
+

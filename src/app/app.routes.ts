@@ -2,9 +2,11 @@ import { Routes } from '@angular/router';
 import { LandingComponent } from './pages/landing/landing.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { PricingComponent } from './pages/pricing/pricing.component';
-import { RegisterComponent } from './pages/register/register.component';
 import { FeaturesComponent } from './pages/features/features.component';
 import { LoginComponent } from './pages/login/login.component';
+import { StudentPageComponent } from './pages/student/student-page.component';
+import { ContactComponent } from './pages/contact/contact.component';
+import { DocsComponent } from './pages/docs/docs.component';
 
 export const routes: Routes = [
   // Ana sayfa - Landing page
@@ -28,18 +30,33 @@ export const routes: Routes = [
     title: 'Fiyatlandırma - Write Wise  '
   },
   
-  // Kayıt sayfası
-  { 
-    path: 'register', 
-    component: RegisterComponent,
-    title: 'Kayıt Ol - Write Wise  '
-  },
   
   // Giriş sayfası
   { 
     path: 'login', 
     component: LoginComponent,
     title: 'Giriş Yap - Write Wise  '
+  },
+
+  // Öğrenci portalı
+  {
+    path: 'ogrenci',
+    component: StudentPageComponent,
+    title: 'Öğrenci Paneli - Sınavlarım'
+  },
+
+  // İletişim sayfası
+  {
+    path: 'iletisim',
+    component: ContactComponent,
+    title: 'İletişim - Write Wise'
+  },
+
+  // Dokümantasyon sayfası
+  {
+    path: 'dokumantasyon',
+    component: DocsComponent,
+    title: 'Dokümantasyon - Write Wise'
   },
 
   // Özellikler sayfası

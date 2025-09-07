@@ -1,0 +1,539 @@
+// Hero color palette - brief'ten gelen kesin renkler
+$sage: #a0bfb9;
+$cool-gray: #c0cfd0;
+$light-gray: #f5f5f5;
+$white: #ffffff;
+$warm-green: #80b48c;
+
+// Typography scaling
+$hero-title-mobile: 2rem;      // 32px
+$hero-title-tablet: 2.5rem;    // 40px  
+$hero-title-desktop: 3rem;     // 48px
+
+$hero-subtitle-mobile: 0.875rem;   // 14px
+$hero-subtitle-tablet: 1rem;       // 16px
+$hero-subtitle-desktop: 1.125rem;  // 18px
+
+// Layout breakpoints
+$mobile-max: 767px;
+$tablet-min: 768px;
+$desktop-min: 1024px;
+
+// Hero Container
+.hero-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  
+  // Responsive heights
+  height: 70vh;
+  min-height: 500px;
+  // Background gradient (doğal, mat yüzeyler)
+  background: linear-gradient(135deg, $white 0%, $light-gray 100%);
+  // Aspect ratio koruması
+  aspect-ratio: 16 / 9;
+  
+  @media (min-width: $tablet-min) {
+    height: 100vh;
+    min-height: 600px;
+    aspect-ratio: unset;
+  }
+}
+
+// Topbar overlay inside hero
+.hero-topbar {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  padding: .75rem 1rem;
+}
+
+.hero-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  /* Sağ kenarı sabit tut, soldan kısalt */
+  margin-left: auto;
+  margin-right: 0;
+  width: calc(100% - 490px);
+  background: linear-gradient(180deg, rgba($white, 0.92) 0%, rgba($light-gray, 0.85) 100%);
+  border: 1px solid rgba($sage, .25);
+  border-radius: .75rem;
+  padding: .6rem .9rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  backdrop-filter: saturate(140%) blur(6px);
+}
+
+.hero-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.topbar-link {
+  background: transparent;
+  border: 0;
+  color: #1a1a1a;
+  font-weight: 600;
+  padding: .45rem .65rem;
+  border-radius: .45rem;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+}
+.topbar-link:hover { background: rgba($sage, .2); }
+
+.topbar-cta {
+  background: $warm-green;
+  color: $white;
+  border: 0;
+  padding: .5rem .8rem;
+  border-radius: .55rem;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba($warm-green,.35);
+  cursor: pointer;
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.topbar-cta:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba($warm-green,.45); }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  color: #1a1a1a;
+  font-weight: 800;
+}
+
+.brand-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: .5rem;
+  display: grid;
+  place-items: center;
+  color: $white;
+  background: linear-gradient(135deg, $warm-green 0%, $sage 100%);
+  box-shadow: 0 8px 24px rgba($warm-green, .35);
+}
+
+.brand-name { font-size: 1rem; }
+
+@media (max-width: $desktop-min) {
+  .hero-topbar-inner { width: calc(100% - 140px); }
+}
+
+@media (max-width: $tablet-min) {
+  .hero-topbar-inner { width: calc(100% - 48px); }
+}
+
+// Video & Canvas Elements
+.hero-video,
+.hero-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  
+  // Performance optimizations
+  will-change: transform;
+  backface-visibility: hidden;
+  
+  // Accessibility
+  user-select: none;
+  pointer-events: none;
+}
+
+.hero-canvas {
+  // Canvas smooth rendering
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.hero-fallback-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+}
+
+// Content Overlay - Sol %30-40 alan
+.hero-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  
+  display: flex;
+  align-items: center;
+  
+  // Sol alan koruması (brief gereksinimi)
+  padding: 1.5rem;
+  
+  @media (min-width: $tablet-min) {
+    padding: 2rem;
+    width: 40%; // Sol %40 alan
+  }
+  
+  @media (min-width: $desktop-min) {
+    padding: 3rem;
+    width: 38%; // Biraz daha dar
+  }
+}
+
+.hero-content-inner {
+  width: 100%;
+  max-width: 500px;
+  
+  // Hafif backdrop (okunabilirlik için)
+  background: linear-gradient(
+    135deg, 
+    rgba($white, 0.95) 0%, 
+    rgba($light-gray, 0.9) 100%
+  );
+  
+  padding: 1.5rem;
+  border-radius: 1rem;
+  
+  // Yumuşak gölge (doğal hissi)
+  box-shadow: 
+    0 8px 32px rgba($sage, 0.08),
+    0 4px 16px rgba($cool-gray, 0.12);
+  
+  backdrop-filter: blur(8px);
+  
+  @media (min-width: $tablet-min) {
+    padding: 2rem;
+    border-radius: 1.25rem;
+  }
+}
+
+// Typography
+.hero-title {
+  font-size: $hero-title-mobile;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: #1a1a1a; // Koyu, doğal renk
+  margin: 0 0 1rem 0;
+  
+  @media (min-width: $tablet-min) {
+    font-size: $hero-title-tablet;
+    margin-bottom: 1.25rem;
+  }
+  
+  @media (min-width: $desktop-min) {
+    font-size: $hero-title-desktop;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.hero-title-accent {
+  display: block;
+  color: $sage;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.hero-subtitle {
+  font-size: $hero-subtitle-mobile;
+  line-height: 1.6;
+  color: #4a4a4a; // Orta ton gri
+  margin: 0 0 2rem 0;
+  
+  @media (min-width: $tablet-min) {
+    font-size: $hero-subtitle-tablet;
+    margin-bottom: 2.5rem;
+  }
+  
+  @media (min-width: $desktop-min) {
+    font-size: $hero-subtitle-desktop;
+    margin-bottom: 3rem;
+  }
+}
+
+// CTA Buttons
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  
+  @media (min-width: $tablet-min) {
+    flex-direction: row;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  // Performance
+  will-change: transform;
+  backface-visibility: hidden;
+  
+  @media (min-width: $tablet-min) {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+  
+  // Focus states (accessibility)
+  &:focus-visible {
+    outline: 2px solid $warm-green;
+    outline-offset: 2px;
+  }
+}
+
+.hero-btn-primary {
+  background-color: $warm-green;
+  color: $white;
+  box-shadow: 0 4px 12px rgba($warm-green, 0.3);
+  
+  &:hover {
+    background-color: #6fa278; // darken($warm-green, 8%) manuel hesaplanmış
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba($warm-green, 0.4);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba($warm-green, 0.3);
+  }
+}
+
+.hero-btn-secondary {
+  background-color: transparent;
+  color: $sage;
+  border: 1.5px solid $sage;
+  
+  &:hover {
+    background-color: $sage;
+    color: $white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($sage, 0.25);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.hero-btn-icon {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  
+  .hero-btn:hover & {
+    transform: translateX(2px);
+  }
+}
+
+// Features Indicators
+.hero-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem; // Kayıt yazısından uygun boşluk
+  
+  @media (min-width: $tablet-min) {
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+}
+
+.hero-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hero-feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  
+  svg {
+    color: $white;
+  }
+}
+
+.hero-feature-text {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+  
+  @media (min-width: $tablet-min) {
+    font-size: 0.9375rem;
+  }
+}
+
+// Progress Indicator (debug/development)
+.hero-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: rgba($cool-gray, 0.3);
+  z-index: 20;
+}
+
+.hero-progress-bar {
+  height: 100%;
+  background-color: $sage;
+  transition: width 0.1s ease-out;
+}
+
+// Scroll Hint
+.scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 15;
+  
+  // Mobilde gizle (space yok)
+  @media (max-width: $mobile-max) {
+    display: none;
+  }
+}
+
+.scroll-hint-line {
+  width: 1px;
+  height: 2rem;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    $cool-gray 50%,
+    transparent 100%
+  );
+  
+  // Subtle animation
+  animation: scrollHintPulse 2s ease-in-out infinite;
+}
+
+.scroll-hint-text {
+  font-size: 0.75rem;
+  color: $cool-gray;
+  font-weight: 500;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 0.1em;
+}
+
+@keyframes scrollHintPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+// Reduced Motion Support
+@media (prefers-reduced-motion: reduce) {
+  .hero-btn,
+  .hero-btn-icon,
+  .scroll-hint-line {
+    transition: none;
+    animation: none;
+  }
+  
+  .scroll-hint {
+    display: none;
+  }
+}
+
+// Dark Mode Support (future-proofing)
+@media (prefers-color-scheme: dark) {
+  .hero-content-inner {
+    background: linear-gradient(
+      135deg, 
+      rgba(#1a1a1a, 0.95) 0%, 
+      rgba(#2a2a2a, 0.9) 100%
+    );
+  }
+  
+  .hero-title {
+    color: #f5f5f5;
+  }
+  
+  .hero-subtitle {
+    color: #d1d1d1;
+  }
+  
+  .hero-feature-text {
+    color: #b0b0b0;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .hero-btn-primary {
+    border: 2px solid $white;
+  }
+  
+  .hero-btn-secondary {
+    border-width: 2px;
+  }
+  
+  .hero-title {
+    color: #000;
+    text-shadow: none;
+  }
+}
+
+// Hero Registration Styles
+.hero-registration {
+  margin-top: 0.5rem;
+  text-align: center;
+  
+  .hero-registration-text {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+  }
+  
+  .hero-registration-link {
+    background: none;
+    border: none;
+    color: $sage;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    font-size: inherit;
+    padding: 0;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: $warm-green;
+      text-decoration-thickness: 2px;
+    }
+    
+    &:focus {
+      outline: 2px solid $sage;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+}

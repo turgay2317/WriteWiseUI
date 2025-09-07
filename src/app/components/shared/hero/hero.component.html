@@ -1,0 +1,136 @@
+<!-- Hero Container - Pin edilecek ana alan -->
+<section #heroContainer class="hero-container" 
+         [attr.aria-label]="'Hero animasyon bölümü'"
+         [attr.aria-hidden]="true">
+  
+  <!-- Hero Top Bar (overlay, metinlerin üstünde) -->
+  <div class="hero-topbar" role="navigation" aria-label="Üst gezinme">
+    <div class="hero-topbar-inner">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3 6 6 .9-4.5 4.3 1.1 6.3L12 16.9 6.4 19.5l1.1-6.3L3 8.9 9 8z"/>
+          </svg>
+        </div>
+        <span class="brand-name">Write Wise</span>
+      </div>
+      <nav class="hero-topbar-actions" aria-label="Hızlı erişim">
+        <button type="button" class="topbar-link" (click)="pricingClick.emit()">Fiyatlandırma</button>
+        <button type="button" class="topbar-link" (click)="featuresClick.emit()">Özellikler</button>
+        <button type="button" class="topbar-link" (click)="contactClick.emit()">İletişim</button>
+        <button type="button" class="topbar-link" (click)="docsClick.emit()">Dokümantasyon</button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Video Mode (varsa ve destekleniyorsa) -->
+  <video #videoElement 
+         *ngIf="useVideoMode()"
+         class="hero-video"
+         [poster]="posterSrc"
+         muted
+         playsinline
+         preload="metadata"
+         [attr.aria-hidden]="true">
+    <!-- Video sources component içinde dinamik olarak eklenir -->
+  </video>
+
+  <!-- Canvas Mode (fallback veya ana mod) -->
+  <canvas #canvasElement
+          *ngIf="!useVideoMode()"
+          class="hero-canvas"
+          [attr.aria-hidden]="true">
+    <!-- Canvas desteklenmeyen tarayıcılar için fallback -->
+    <img [src]="posterSrc" alt="" class="hero-fallback-image" />
+  </canvas>
+
+  <!-- Content Overlay - Sol %30-40 alan (erişilebilir içerik) -->
+  <div class="hero-content">
+    <div class="hero-content-inner">
+      
+      <!-- Ana Başlık -->
+      <h1 class="hero-title">
+        Eğitim Teknolojileri
+        <span class="hero-title-accent">Geleceği</span>
+      </h1>
+
+      <!-- Alt Başlık -->
+      <p class="hero-subtitle">
+        Doğal öğrenme deneyimi için tasarlanan akıllı eğitim araçları. 
+        Öğrencilerin potansiyelini ortaya çıkaran, insanî yaklaşımla geliştirilmiş platform.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="hero-actions">
+        <button class="hero-btn hero-btn-primary" 
+                type="button"
+                (click)="ctaPrimaryClick.emit()"
+                [attr.aria-label]="'Öğretmen paneline giriş yap'">
+          <span>Öğretmen Girişi</span>
+          <svg class="hero-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <button class="hero-btn hero-btn-secondary" 
+                type="button"
+                (click)="ctaSecondaryClick.emit()"
+                [attr.aria-label]="'Öğrenci girişi yap'">
+          <svg class="hero-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+          <span>Öğrenci Girişi</span>
+        </button>
+      </div>
+
+      <!-- Features Indicators -->
+      <div class="hero-features" role="list" aria-label="Ana özellikler">
+        <div class="hero-feature" role="listitem">
+          <div class="hero-feature-icon" [style.background-color]="colors.warmGreen">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </div>
+          <span class="hero-feature-text">Anlık Geri Bildirim</span>
+        </div>
+
+        <div class="hero-feature" role="listitem">
+          <div class="hero-feature-icon" [style.background-color]="colors.warmGreen">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </div>
+          <span class="hero-feature-text">Kişisel Öğrenim Yolu</span>
+        </div>
+
+        <div class="hero-feature" role="listitem">
+          <div class="hero-feature-icon" [style.background-color]="colors.warmGreen">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </div>
+          <span class="hero-feature-text">Doğal Etkileşim</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Progress Indicator (opsiyonel, debug için) -->
+  <div class="hero-progress" 
+       *ngIf="false"
+       [attr.aria-hidden]="true">
+    <div class="hero-progress-bar" 
+         [style.width.%]="(currentFrame() / 100) * 100">
+    </div>
+  </div>
+
+</section>
+
+<!-- Scroll hint (reduced motion durumunda gizli) -->
+<div class="scroll-hint" 
+     *ngIf="!scrollService.isReducedMotion"
+     [attr.aria-hidden]="true">
+  <div class="scroll-hint-line"></div>
+  <span class="scroll-hint-text">Keşfetmek için kaydırın</span>
+</div>
