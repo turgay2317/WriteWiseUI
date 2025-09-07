@@ -145,7 +145,7 @@ import { ModuleKey } from '../../models';
         </section>
 
         <!-- Expanded Module Views -->
-        <section *ngIf="appState.expandedModule()" class="absolute inset-x-4 top-4 bottom-[110px]">
+        <section *ngIf="appState.expandedModule()" class="absolute inset-x-4 top-4 bottom-[60px]">
           <div class="card p-0 w-full animate-slide-in relative h-full" 
                [ngClass]="appState.getOriginClass(appState.expandedModule())">
             

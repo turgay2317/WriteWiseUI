@@ -1,0 +1,63 @@
+// Login page specific refinements reusing register styles
+
+.login-card {
+  max-width: none; // üst sınırı kaldır
+  width: min(860px, 92vw); // hedef genişlik
+  padding: 1.5rem 1.25rem; // dikeyde çok az arttırıldı
+}
+
+  /* Daha yüksek özgüllükle (specificity) max-width kesin uygulasın */
+.register-card.login-card { max-width: none; width: min(400px, 92vw); }
+
+.login-grid { grid-template-columns: 1fr; }
+
+.login-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.link.subtle {
+  background: none;
+  border: none;
+  color: #aeb7c2; // register koyu kart ikincil
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link.small { font-size: .9rem; }
+
+.label-row { display: flex; align-items: center; justify-content: space-between; }
+
+.input-with-icon { position: relative; }
+.input-with-icon input { width: 100%; padding-right: 2.25rem; }
+.icon-btn { position: absolute; right: .55rem; top: 50%; transform: translateY(-50%); background: none; border: 0; color: #aeb7c2; display: grid; place-items: center; height: 28px; width: 28px; cursor: pointer; }
+.icon-btn:hover { color: #ffffff; }
+
+.divider { display: flex; align-items: center; gap: 1rem; color: #aeb7c2; opacity: .9; margin: .25rem 0 .5rem; }
+.divider::before, .divider::after { content: ""; height: 1px; background: rgba(160,191,185,.25); flex: 1; }
+
+.btn-alt {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  color: #eef2f6;
+  background: #0f1113;
+  border: 1px solid rgba(160,191,185,.28);
+  border-radius: .6rem;
+  padding: .8rem 1rem;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
+}
+.btn-alt:hover { transform: translateY(-1px); border-color: rgba(160,191,185,.5); background: #101316; }
+
+@media (max-width: 768px){
+  .login-card { max-width: 100%; }
+  .login-actions { flex-direction: column; align-items: stretch; }
+  .link.subtle { align-self: center; }
+}
+
+

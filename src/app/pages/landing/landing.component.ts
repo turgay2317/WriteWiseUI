@@ -20,7 +20,8 @@ import { FooterComponent } from '../../components/shared/footer/footer.component
         (onRegisterClick)="onRegister()"
         (pricingClick)="onPricing()"
         (featuresClick)="onFeatures()"
-        (contactClick)="onContactUs()">
+        (contactClick)="onContactUs()"
+        (docsClick)="onDocs()">
       </app-hero-scroll-scene>
 
       <!-- Hero içindeki topbar'a taşındı -->
@@ -30,39 +31,9 @@ import { FooterComponent } from '../../components/shared/footer/footer.component
         <div class="container">
           <div class="features-header">
             <h2>Özellikler</h2>
-            <p>Öğretmenlerin işini kolaylaştıran, öğrencilerin öğrenmesini hızlandıran şık ve yalın araçlar.</p>
           </div>
 
-          <!-- Featured row -->
-          <div class="features-featured">
-            <article class="feature-hero-card">
-              <div class="feature-hero-content">
-                <h3 class="feature-hero-title">Akıllı Değerlendirme Motoru</h3>
-                <p class="feature-hero-text">Yanıtları anında işler, objektif kriterlerle puanlar ve geliştirici geri bildirimler üretir.</p>
-                <div class="feature-hero-meta">
-                  <span class="badge">%3.5x hız</span>
-                  <span class="badge badge-outline">Tutarlı ölçme</span>
-                </div>
-              </div>
-              <div class="feature-visual-wrap">
-                <img src="assets/poster.svg" alt="Değerlendirme görseli" class="feature-visual"/>
-              </div>
-            </article>
-
-            <article class="feature-hero-card alt">
-              <div class="feature-hero-content">
-                <h3 class="feature-hero-title">Sınıf Analitiği ve Yönetim</h3>
-                <p class="feature-hero-text">İlerlemeyi takip edin, riskteki öğrencileri tespit edin ve hedefli destek verin.</p>
-                <div class="feature-hero-meta">
-                  <span class="badge">Gerçek zamanlı</span>
-                  <span class="badge badge-outline">Ölçeklenebilir</span>
-                </div>
-              </div>
-              <div class="feature-visual-wrap small">
-                <img src="assets/graduation-cap.svg" alt="Analitik görseli" class="feature-visual"/>
-              </div>
-            </article>
-          </div>
+          <!-- Featured row (removed per request) -->
 
           <!-- All features grid -->
           <h3 class="features-subtitle">Tüm Özellikler</h3>
@@ -154,6 +125,10 @@ import { FooterComponent } from '../../components/shared/footer/footer.component
               <button class="cta-btn cta-btn-secondary" (click)="onContactUs()">
                 <span>İletişime Geçin</span>
               </button>
+
+              <button class="cta-btn cta-btn-secondary" (click)="onDocs()">
+                <span>Dokümantasyon</span>
+              </button>
             </div>
           </div>
         </div>
@@ -180,9 +155,7 @@ export class LandingComponent {
   }
 
   onContactUs(): void {
-    // İletişim sayfasına yönlendir veya modal aç
-    console.log('İletişim tıklandı');
-    // this.router.navigate(['/contact']);
+    this.router.navigate(['/iletisim']);
   }
 
   onPricing(): void {
@@ -197,5 +170,9 @@ export class LandingComponent {
   onFeatures(): void {
     // Ayrı Özellikler sayfasına yönlendir
     this.router.navigate(['/features']);
+  }
+
+  onDocs(): void {
+    this.router.navigate(['/dokumantasyon']);
   }
 }
