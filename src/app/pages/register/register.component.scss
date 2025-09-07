@@ -1,0 +1,135 @@
+$sage: #a0bfb9; // tailwind.config.js ile uyumlu
+$warm-green: #80b48c;
+$light-bg: #f5f5f5; // pricing sayfasındaki açık zemin
+$dark-bg: #0f0f10; // hero tarzı ama yumuşak
+$card-bg: #1a1e24; // bir tık daha açık koyu ton
+$ink: #2c2c2c; // espresso
+$muted: #666666; // medium text
+
+.register-hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg,
+    rgba($sage, 0.08) 0%,
+    rgba($light-bg, 1) 22%,
+    rgba(#e7e4e4, 1) 55%,
+    rgba($warm-green, 0.05) 100%);
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+// Pricing benzeri yumuşak doku
+.register-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(70% 60% at 15% 20%, rgba($sage, 0.06) 0%, transparent 60%),
+    radial-gradient(70% 60% at 85% 80%, rgba($warm-green, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.register-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.logo { width: 48px; height: 48px; opacity: .95; filter: grayscale(100%) brightness(1.05); }
+.heading { color: $ink; font-size: 2.25rem; font-weight: 800; letter-spacing: .2px; margin: 0 0 .5rem 0; }
+
+.register-card {
+  width: 100%;
+  max-width: 720px;
+  background: #303030; // İstenen siyah tonu
+  color: #eef2f6;
+  border-radius: 1rem;
+  border: 1px solid rgba($sage,.2);
+  padding: 1.25rem;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.22);
+}
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+
+.form-field { display: flex; flex-direction: column; gap: .4rem; text-align: left; }
+.form-field label { color: #ffffff; font-size: .9rem; }
+.form-field input {
+  background: #0f1113;
+  color: #eef2f6;
+  border: 1px solid rgba($sage,.28);
+  border-radius: .6rem;
+  padding: .75rem .9rem;
+  outline: none;
+  transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
+}
+.form-field input::placeholder { color: rgba(#eef2f6,.55); }
+.form-field input:focus { border-color: $warm-green; box-shadow: 0 0 0 3px rgba($warm-green,.28); background: #0d0f11; }
+
+.col-span-2 { grid-column: span 2; }
+
+.role-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #0f1113;
+  border: 1px solid rgba($sage,.28);
+  border-radius: .6rem;
+  padding: .2rem;
+  gap: .25rem;
+}
+.role-btn {
+  appearance: none;
+  background: transparent;
+  color: #eef2f6;
+  border: 0;
+  border-radius: .5rem;
+  padding: .55rem .75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, box-shadow .2s ease;
+}
+.role-btn.active { background: $warm-green; color: #0f1113; box-shadow: 0 6px 18px rgba($warm-green,.35); }
+.role-btn:hover { background: rgba($sage,.12); }
+
+.btn-continue {
+  width: 100%;
+  background: #ffffff;
+  color: $ink;
+  border: 1px solid rgba($sage,.35);
+  border-radius: .6rem;
+  padding: .85rem 1rem;
+  font-weight: 700;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.btn-continue:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(0,0,0,.12); border-color: rgba($sage,.5); }
+
+// Primary variant: pricing sayfası CTA oranında yeşil vurgulu
+.btn-continue.primary {
+  background: $warm-green;
+  color: #ffffff;
+  border-color: rgba($warm-green,.4);
+  box-shadow: 0 10px 26px rgba($warm-green,.35);
+}
+.btn-continue.primary:hover { box-shadow: 0 12px 30px rgba($warm-green,.45); }
+
+.divider { display: flex; align-items: center; gap: 1rem; color: $muted; opacity: .9; }
+.divider::before, .divider::after { content: ""; height: 1px; background: rgba($sage,.25); flex: 1; }
+
+/* Social styles removed (no social login on register) */
+
+.signin-note { color: $muted; margin: 1rem 0 0; }
+.signin-note .link { background: none; border: 0; padding: 0; color: $warm-green; font-weight: 600; cursor: pointer; }
+.signin-note .link:hover { text-decoration: underline; }
+
+.tos { color: $muted; font-size: .85rem; margin: .5rem 0 0; }
+.tos a { color: $ink; opacity: .9; }
+.tos a:hover { color: $warm-green; }
+
+@media (max-width: 768px){
+  .form-grid { grid-template-columns: 1fr; }
+  .col-span-2 { grid-column: span 1; }
+}
+
+
