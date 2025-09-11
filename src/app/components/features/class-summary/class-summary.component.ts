@@ -33,6 +33,8 @@ interface SinavIstatistikleri {
 export class ClassSummaryComponent implements OnInit, OnDestroy {
   siniflar: any[] = [];
   seciliSinif: any = null;
+  dersler: any[] = [];
+  seciliDers: any = null;
   sinavlar: any[] = [];
   seciliSinav: any = null;
   istatistikler: SinavIstatistikleri | null = null;
@@ -77,7 +79,16 @@ export class ClassSummaryComponent implements OnInit, OnDestroy {
 
   selectSinif(sinif: any) {
     this.seciliSinif = sinif;
-    this.sinavlar = sinif.sinavlar || [];
+    this.dersler = sinif.dersler || [];
+    this.seciliDers = null;
+    this.sinavlar = [];
+    this.seciliSinav = null;
+    this.istatistikler = null;
+  }
+
+  selectDers(ders: any) {
+    this.seciliDers = ders;
+    this.loadDersSinavlari(ders.id);
     this.seciliSinav = null;
     this.istatistikler = null;
   }
@@ -85,6 +96,25 @@ export class ClassSummaryComponent implements OnInit, OnDestroy {
   selectSinav(sinav: any) {
     this.seciliSinav = sinav;
     this.loadIstatistikler(sinav.sinav_id);
+  }
+
+  loadDersSinavlari(dersId: number) {
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    // Ders ID'sine göre sınavları getir
+    this.authService.getDersSinavlari(dersId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.sinavlar = response.sinavlar || [];
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.errorMessage = error.error?.error || 'Sınavlar yüklenemedi';
+          this.isLoading = false;
+        }
+      });
   }
 
   loadIstatistikler(sinavId: number) {

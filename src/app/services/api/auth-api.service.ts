@@ -288,4 +288,18 @@ export class AuthApiService {
       }
     });
   }
+
+  getDersSinavlari(dersId: number): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    return this.http.get(`${this.API_BASE_URL}/teacher/dersler/${dersId}/sinavlar`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
 }

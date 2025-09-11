@@ -7,7 +7,7 @@
     </button>
   </div>
   
-  <div class="hidden md:grid gap-3 lg:grid-cols-2 xl:grid-cols-3 h-full" style="grid-template-columns: 1fr 1.15fr 1.15fr;">
+  <div class="hidden md:grid gap-3 lg:grid-cols-4 h-full">
     <!-- Sol: Sınıf Listesi -->
     <section class="flexible-content overflow-hidden">
       <div class="mt-0 flex items-center justify-between">
@@ -29,38 +29,53 @@
         <button 
           *ngFor="let sinif of siniflar" 
           class="group w-full text-left h-16 px-3 relative hover:bg-primary/10" 
-          [ngClass]="{'bg-infoSurface/30': seciliSinif?.sinif_id === sinif.sinif_id}" 
+          [ngClass]="{'bg-infoSurface/30': seciliSinif?.id === sinif.id}" 
           (click)="selectSinif(sinif)">
           <div class="flex items-center justify-between h-full">
             <div>
-              <div class="text-[17px] font-semibold text-espresso">{{ sinif.sinif_adi }}</div>
-              <div class="text-sm text-espresso/60">{{ sinif.sinav_sayisi }} sınav</div>
+              <div class="text-[17px] font-semibold text-espresso">{{ sinif.ad }}</div>
+              <div class="text-sm text-espresso/60">{{ (sinif.dersler || []).length }} ders</div>
             </div>
-            <div *ngIf="seciliSinif?.sinif_id === sinif.sinif_id" class="text-primary">✔</div>
+            <div *ngIf="seciliSinif?.id === sinif.id" class="text-primary">✔</div>
           </div>
         </button>
       </div>
     </section>
     
-    <!-- Orta: Sınav Listesi -->
-    <section class="flexible-content hidden lg:block" [class.animate-slide-in]="seciliSinif">
+    <!-- Orta: Ders Listesi -->
+    <section class="flexible-content hidden md:block" [class.animate-slide-in]="seciliSinif">
       <div *ngIf="!seciliSinif" class="mt-7 h-96 border-2 border-dashed border-borderGray rounded-lg grid place-items-center text-espresso/50">Sınıf seçin</div>
       <div *ngIf="seciliSinif">
-        <div class="text-base font-semibold text-espresso">{{ seciliSinif.sinif_adi }} · Sınav Listesi</div>
-        <!-- Sorting header for exam list -->
-        <div class="flex bg-gray-50 text-sm font-medium text-espresso/70 border border-borderGray rounded-t-lg mb-0 mt-2">
-          <button class="flex-1 px-3 py-2 text-left hover:bg-gray-100 transition-colors rounded-tl-lg">
-            <span class="flex items-center gap-1">
-              Sınav
-            </span>
-          </button>
-          <button class="flex-1 px-3 py-2 text-left hover:bg-gray-100 transition-colors border-l border-borderGray rounded-tr-lg">
-            <span class="flex items-center gap-1">
-              Tarih
-            </span>
+        <div class="text-base font-semibold text-espresso">{{ seciliSinif.ad }} · Ders Listesi</div>
+        <!-- Ders Listesi -->
+        <div class="h-[342px] overflow-auto divide-y divide-borderGray/60 border border-borderGray rounded-lg mt-2">
+          <div *ngIf="dersler.length === 0" class="h-full flex items-center justify-center text-espresso/50">
+            Henüz ders eklenmemiş
+          </div>
+          <button 
+            *ngFor="let ders of dersler" 
+            class="w-full text-left h-12 px-3 relative hover:bg-primary/10" 
+            (click)="selectDers(ders)" 
+            [ngClass]="{'bg-infoSurface/30': seciliDers?.id === ders.id}">
+            <div class="flex items-center justify-between h-full">
+              <div class="text-[15px] font-semibold text-espresso">{{ ders.ad }}</div>
+              <div *ngIf="ders.ders_adi" class="text-sm text-espresso/70">{{ ders.ders_adi }}</div>
+              <div *ngIf="seciliDers?.id === ders.id" class="text-primary">✔</div>
+            </div>
           </button>
         </div>
-        <div class="h-[342px] overflow-auto divide-y divide-borderGray/60 border-l border-r border-b border-borderGray rounded-b-lg">
+      </div>
+    </section>
+    
+    <!-- Sağ: Sınav Listesi -->
+    <section class="flexible-content hidden md:block" [class.animate-slide-in]="seciliDers">
+      <div *ngIf="!seciliDers" class="mt-7 h-96 border-2 border-dashed border-borderGray rounded-lg grid place-items-center text-espresso/50">Ders seçin</div>
+      <div *ngIf="seciliDers">
+        <div class="text-base font-semibold text-espresso">{{ seciliDers.ad }} · Sınav Listesi</div>
+        <div class="h-[342px] overflow-auto divide-y divide-borderGray/60 border border-borderGray rounded-lg mt-2">
+          <div *ngIf="sinavlar.length === 0" class="h-full flex items-center justify-center text-espresso/50">
+            Henüz sınav eklenmemiş
+          </div>
           <button 
             *ngFor="let sinav of sinavlar" 
             class="w-full text-left h-12 px-3 relative hover:bg-primary/10" 
@@ -76,13 +91,13 @@
       </div>
     </section>
     
-    <!-- Sağ: İstatistikler -->
-    <section class="flexible-content hidden xl:block" [class.animate-slide-in]="seciliSinav">
+    <!-- En Sağ: İstatistikler -->
+    <section class="flexible-content hidden md:block" [class.animate-slide-in]="seciliSinav">
       <div *ngIf="!seciliSinav" class="mt-7 h-96 border-2 border-dashed border-borderGray rounded-lg grid place-items-center text-espresso/50">Sınav seçin</div>
       <div *ngIf="seciliSinav" class="relative mt-8">
         <!-- Başlık - Kenarlığın üzerinde -->
         <div class="absolute -top-9 left-4 z-10 bg-white px-3 py-1">
-          <div class="text-base font-semibold text-espresso">{{ seciliSinif?.sinif_adi }} · {{ seciliSinav.ders_adi }} Sınav Analizi</div>
+          <div class="text-base font-semibold text-espresso">{{ seciliSinif?.ad }} · {{ seciliDers?.ad }} · {{ seciliSinav.ders_adi }} Sınav Analizi</div>
         </div>
 
         <!-- Ana kart -->
@@ -159,10 +174,10 @@
       </div>
     </section>
 
-    <!-- lg: Analysis below -->
-    <section class="lg:col-span-2 xl:hidden" [class.hidden]="!seciliSinav">
+    <!-- Mobile/Tablet: Analysis below -->
+    <section class="md:hidden" [class.hidden]="!seciliSinav">
       <div *ngIf="seciliSinav" class="animate-slide-in space-y-4">
-        <div class="text-base font-semibold text-espresso">{{ seciliSinif?.sinif_adi }} · {{ seciliSinav.ders_adi }} Sınav Analizi</div>
+        <div class="text-base font-semibold text-espresso">{{ seciliSinif?.ad }} · {{ seciliDers?.ad }} · {{ seciliSinav.ders_adi }} Sınav Analizi</div>
         
         <!-- Loading -->
         <div *ngIf="isLoading" class="flex justify-center items-center py-8">
