@@ -19,9 +19,8 @@ export class ExamUploadComponent implements OnInit, OnDestroy {
   selectedSinifId: number | null = null;
   
   // File handling
-  selectedFile: File | null = null;
+  selectedFiles: File[] = [];
   isDraggingOver = false;
-  hasSelectedFile = false;
   
   // Data
   dersler: any[] = [];
@@ -96,7 +95,7 @@ export class ExamUploadComponent implements OnInit, OnDestroy {
     
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
-      this.handleFileSelection(files[0]);
+      this.handleFileSelection(Array.from(files));
     }
   }
 
@@ -113,34 +112,44 @@ export class ExamUploadComponent implements OnInit, OnDestroy {
   onFileInputChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.handleFileSelection(input.files[0]);
+      this.handleFileSelection(Array.from(input.files));
     }
   }
 
-  private handleFileSelection(file: File) {
-    // File type validation
-    const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      this.errorMessage = 'Sadece PDF, PNG, JPG dosyaları desteklenir';
-      return;
-    }
-
-    // File size validation (25MB)
+  private handleFileSelection(files: File[]) {
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
     const maxSize = 25 * 1024 * 1024; // 25MB in bytes
-    if (file.size > maxSize) {
-      this.errorMessage = 'Dosya boyutu 25MB\'dan küçük olmalıdır';
-      return;
+    const validFiles: File[] = [];
+
+    for (const file of files) {
+      // File type validation
+      if (!allowedTypes.includes(file.type)) {
+        this.errorMessage = 'Sadece PNG, JPG dosyaları desteklenir';
+        continue;
+      }
+
+      // File size validation (25MB)
+      if (file.size > maxSize) {
+        this.errorMessage = 'Dosya boyutu 25MB\'dan küçük olmalıdır';
+        continue;
+      }
+
+      validFiles.push(file);
     }
 
-    this.selectedFile = file;
-    this.hasSelectedFile = true;
+    if (validFiles.length > 0) {
+      this.selectedFiles = [...this.selectedFiles, ...validFiles];
+      this.errorMessage = '';
+    }
+  }
+
+  clearSelectedFiles() {
+    this.selectedFiles = [];
     this.errorMessage = '';
   }
 
-  clearSelectedFile() {
-    this.selectedFile = null;
-    this.hasSelectedFile = false;
-    this.errorMessage = '';
+  removeFile(index: number) {
+    this.selectedFiles.splice(index, 1);
   }
 
   formatFileSize(bytes: number): string {
@@ -151,8 +160,8 @@ export class ExamUploadComponent implements OnInit, OnDestroy {
   }
 
   onSaveExam() {
-    if (!this.hasSelectedFile) {
-      this.errorMessage = 'Lütfen bir dosya seçin';
+    if (this.selectedFiles.length === 0) {
+      this.errorMessage = 'Lütfen en az bir fotoğraf seçin';
       return;
     }
 
@@ -179,7 +188,7 @@ export class ExamUploadComponent implements OnInit, OnDestroy {
       degerlendirme_hususu: this.evaluationRules
     };
 
-    this.authService.startExamAnalysis(requestData)
+    this.authService.startExamAnalysis(requestData, this.selectedFiles)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -190,8 +199,7 @@ export class ExamUploadComponent implements OnInit, OnDestroy {
           
           // Reset form
           setTimeout(() => {
-            this.selectedFile = null;
-            this.hasSelectedFile = false;
+            this.selectedFiles = [];
             this.selectedDersId = null;
             this.selectedSinifId = null;
             this.evaluationRules = 'Açık uçlu sorularda anahtar kavramlar geçerse kısmi puan ver.\nDoğru yöntem-yanlış sonuç için %50 puan uygula.\nÇoktan seçmelide net anahtar: yalnız doğru seçenek tam puan.';

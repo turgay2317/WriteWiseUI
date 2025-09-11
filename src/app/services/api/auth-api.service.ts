@@ -249,16 +249,28 @@ export class AuthApiService {
     });
   }
 
-  startExamAnalysis(data: any): Observable<any> {
+  startExamAnalysis(data: any, files: File[]): Observable<any> {
     const token = localStorage.getItem('jwt_token');
     if (!token) {
       throw new Error('No token found');
     }
 
-    return this.http.post(`${this.API_BASE_URL}/run`, data, {
+    const formData = new FormData();
+    
+    // Add form data
+    formData.append('ders_id', data.ders_id.toString());
+    formData.append('sinif_id', data.sinif_id.toString());
+    formData.append('degerlendirme_hususu', data.degerlendirme_hususu);
+    
+    // Add files
+    files.forEach((file, index) => {
+      formData.append('images', file);
+    });
+
+    return this.http.post(`${this.API_BASE_URL}/run`, formData, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        'Authorization': `Bearer ${token}`
+        // Don't set Content-Type, let browser set it with boundary
       }
     });
   }
