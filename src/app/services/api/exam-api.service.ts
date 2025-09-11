@@ -7,7 +7,7 @@ import { UploadedExam, Question, UploadTab } from '../../models';
   providedIn: 'root'
 })
 export class ExamApiService {
-  private readonly baseUrl = '/api';
+  private readonly baseUrl = 'http://localhost:5000/api';
   // Uploaded exams data
   private uploadedExamsSignal = signal<UploadedExam[]>([
     { id: 'u1', title: 'Kasım Matematik', subject: 'Matematik', clazz: '4A', date: '2024-11-12', students: 28, status: 'Tamamlandı' },
@@ -167,6 +167,53 @@ export class ExamApiService {
   }
 
   constructor(private http: HttpClient) {}
+
+  // Gerçek API çağrıları
+  getSinav(sinavId: number): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.get(`${this.baseUrl}/sinav/${sinavId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
+  getSoru(sinavId: number, soruNo: number): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.get(`${this.baseUrl}/sinav/${sinavId}/soru/${soruNo}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
+  updateCevapPuan(soruId: number, cevapId: number, puan: number): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.put(`${this.baseUrl}/soru/${soruId}/cevap/${cevapId}/puan`, 
+      { puan: puan }, 
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+  }
+
+  updateAnalizDegerlendirme(analizId: number, pozitif: string, negatif: string): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.put(`${this.baseUrl}/analiz/${analizId}/degerlendirme`, 
+      { pozitif: pozitif, negatif: negatif }, 
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+  }
 
   analyzeUpload(params: {
     file: File;

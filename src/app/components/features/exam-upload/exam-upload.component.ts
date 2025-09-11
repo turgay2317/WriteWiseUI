@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AppStateService } from '../../../services/core/app-state.service';
 import { ToastService } from '../../../services/core/toast.service';
 import { AuthApiService } from '../../../services/api/auth-api.service';
@@ -37,7 +38,8 @@ export class ExamUploadComponent implements OnInit, OnDestroy {
   constructor(
     public appState: AppStateService,
     private toastService: ToastService,
-    private authService: AuthApiService
+    private authService: AuthApiService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -197,15 +199,22 @@ export class ExamUploadComponent implements OnInit, OnDestroy {
           this.isUploading = false;
           this.successMessage = 'Sınav analizi başarıyla tamamlandı!';
           
-          // Reset form
-          setTimeout(() => {
-            this.selectedFiles = [];
-            this.selectedDersId = null;
-            this.selectedSinifId = null;
-            this.evaluationRules = 'Açık uçlu sorularda anahtar kavramlar geçerse kısmi puan ver.\nDoğru yöntem-yanlış sonuç için %50 puan uygula.\nÇoktan seçmelide net anahtar: yalnız doğru seçenek tam puan.';
-            this.successMessage = '';
-            this.uploadProgress = 0;
-          }, 3000);
+          // Sınav analizi tamamlandıktan sonra ilk soruya yönlendir
+          if (response.sinav_id) {
+            setTimeout(() => {
+              this.router.navigate(['/sinav', response.sinav_id, 'soru', 1]);
+            }, 2000);
+          } else {
+            // Reset form
+            setTimeout(() => {
+              this.selectedFiles = [];
+              this.selectedDersId = null;
+              this.selectedSinifId = null;
+              this.evaluationRules = 'Açık uçlu sorularda anahtar kavramlar geçerse kısmi puan ver.\nDoğru yöntem-yanlış sonuç için %50 puan uygula.\nÇoktan seçmelide net anahtar: yalnız doğru seçenek tam puan.';
+              this.successMessage = '';
+              this.uploadProgress = 0;
+            }, 3000);
+          }
         },
         error: (error) => {
           clearInterval(progressInterval);

@@ -7,6 +7,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { StudentPageComponent } from './pages/student/student-page.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { DocsComponent } from './pages/docs/docs.component';
+import { QuestionAnalysisComponent } from './components/features/question-analysis/question-analysis.component';
 
 export const routes: Routes = [
   // Ana sayfa - Landing page
@@ -64,6 +65,13 @@ export const routes: Routes = [
     path: 'features',
     component: FeaturesComponent,
     title: 'Özellikler - Write Wise  '
+  },
+
+  // Soru analiz sayfası
+  {
+    path: 'sinav/:sinavId/soru/:soruNo',
+    component: QuestionAnalysisComponent,
+    title: 'Soru Analizi - Write Wise'
   },
   
   // Öğrenci Girişi (farazi - gelecekte implement edilecek)
