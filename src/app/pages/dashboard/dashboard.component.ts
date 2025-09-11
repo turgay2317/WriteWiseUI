@@ -15,7 +15,7 @@ import { ToastComponent } from '../../components/shared/toast/toast.component';
 import { StudentListComponent } from '../../components/features/student-list/student-list.component';
 import { ClassSummaryComponent } from '../../components/features/class-summary/class-summary.component';
 import { ExamUploadComponent } from '../../components/features/exam-upload/exam-upload.component';
-import { UploadedExamsComponent } from '../../components/features/exam-list/uploaded-exams.component';
+import { ClassesSubjectsComponent } from '../../components/features/classes-subjects/classes-subjects.component';
 
 // Types
 import { ModuleKey } from '../../models';
@@ -30,7 +30,7 @@ import { ModuleKey } from '../../models';
     StudentListComponent,
     ClassSummaryComponent,
     ExamUploadComponent,
-    UploadedExamsComponent
+    ClassesSubjectsComponent
   ],
   template: `
     <!-- Dashboard Header -->
@@ -120,9 +120,9 @@ import { ModuleKey } from '../../models';
             </div>
           </div>
 
-          <!-- Sınavlarım Card -->
+          <!-- Sınıflar/Dersler Card -->
           <div class="dashboard-card group relative overflow-hidden transition-all duration-300 hover:scale-[1.02]" 
-               (click)="expandCard('yuklemeler')">
+               (click)="expandCard('siniflar-dersler')">
             
             <!-- Background Gradient -->
             <div class="absolute inset-0 bg-gradient-to-br from-slate-700/90 to-gray-800/80"></div>
@@ -132,14 +132,14 @@ import { ModuleKey } from '../../models';
             <div class="relative z-10 p-6 h-full flex flex-col items-center justify-center text-white">
               <div class="h-16 w-16 rounded-2xl bg-white/20 backdrop-blur-sm grid place-items-center text-white transition-all duration-300 group-hover:scale-110 group-hover:bg-white/30 mb-6">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13" stroke-width="1.2"/>
-                  <line x1="16" y1="17" x2="8" y2="17" stroke-width="1.2"/>
-                  <line x1="13" y1="9" x2="8" y2="9" stroke-width="1.2"/>
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                  <path d="M8 7h8"/>
+                  <path d="M8 11h8"/>
+                  <path d="M8 15h5"/>
                 </svg>
               </div>
-              <h3 class="text-xl lg:text-2xl font-bold text-white">Sınavlarım</h3>
+              <h3 class="text-xl lg:text-2xl font-bold text-white">Sınıflar/Dersler</h3>
             </div>
           </div>
         </section>
@@ -161,9 +161,9 @@ import { ModuleKey } from '../../models';
             <app-exam-upload *ngIf="appState.expandedModule() === 'sinav-yukle'">
             </app-exam-upload>
 
-            <!-- Yüklenen Sınavlar Module -->  
-            <app-uploaded-exams *ngIf="appState.expandedModule() === 'yuklemeler'">
-            </app-uploaded-exams>
+            <!-- Sınıflar/Dersler Module -->  
+            <app-classes-subjects *ngIf="appState.expandedModule() === 'siniflar-dersler'">
+            </app-classes-subjects>
             
           </div>
         </section>
@@ -194,8 +194,8 @@ export class DashboardComponent {
       this.studentService.resetStudentModule();
     } else if (key === 'sinif-ozet') {
       this.classSummaryService.resetClassSummary();
-    } else if (key === 'yuklemeler') {
-      this.uploadedExamService.resetUploadedExams();
+    } else if (key === 'siniflar-dersler') {
+      // Sınıflar/Dersler modülü için reset işlemi
     }
   }
 

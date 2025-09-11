@@ -215,6 +215,27 @@ export class ExamApiService {
     );
   }
 
+  getSinavIstatistikleri(sinavId: number): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.get(`${this.baseUrl}/sinav/${sinavId}/istatistikler`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
+
+  getSiniflar(): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.get(`${this.baseUrl}/siniflar`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
   analyzeUpload(params: {
     file: File;
     rules: string;

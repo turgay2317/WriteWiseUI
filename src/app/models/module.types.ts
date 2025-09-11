@@ -1,4 +1,4 @@
-export type ModuleKey = 'ogrenciler' | 'sinif-ozet' | 'sinav-yukle' | 'yuklemeler';
+export type ModuleKey = 'ogrenciler' | 'sinif-ozet' | 'sinav-yukle' | 'siniflar-dersler';
 
 export type ExamType = 'Çoktan Seçmeli' | 'Açık Uçlu' | 'Karma';
 

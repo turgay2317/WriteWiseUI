@@ -1,0 +1,280 @@
+<!-- Sınıflar/Dersler Yönetimi -->
+<div class="h-full max-h-full p-4 lg:p-6 overflow-hidden relative">
+  <!-- Kapat Butonu -->
+  <div class="absolute top-4 right-4 z-10">
+    <button class="btn btn-ghost p-2" (click)="appState.collapseAll()" aria-label="Kapat">
+      <span class="text-lg font-bold text-espresso">✕</span>
+    </button>
+  </div>
+  
+  <div class="h-full flex flex-col lg:flex-row gap-4">
+    
+    <!-- Sol Panel: Sınıflar -->
+    <div class="lg:w-1/3 flex flex-col">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-espresso">Sınıflar</h2>
+        <button 
+          class="btn btn-primary btn-sm"
+          (click)="startAddingClass()"
+          [disabled]="isAddingClass">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Yeni Sınıf
+        </button>
+      </div>
+
+      <!-- Sınıf Ekleme Formu -->
+      <div *ngIf="isAddingClass" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+        <h3 class="text-sm font-semibold text-espresso mb-3">Yeni Sınıf Ekle</h3>
+        <div class="space-y-3">
+          <input 
+            type="text" 
+            [(ngModel)]="newClassData.ad"
+            placeholder="Sınıf adı (örn: 4A)"
+            class="input input-bordered w-full"
+            maxlength="50">
+          <div class="flex gap-2">
+            <button 
+              class="btn btn-primary btn-sm"
+              (click)="addClass()"
+              [disabled]="!newClassData.ad.trim() || isLoading">
+              Kaydet
+            </button>
+            <button 
+              class="btn btn-ghost btn-sm"
+              (click)="cancelAddingClass()">
+              İptal
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sınıf Listesi -->
+      <div class="flex-1 overflow-auto border border-borderGray rounded-lg">
+        <div *ngIf="isLoading" class="flex justify-center items-center h-32">
+          <div class="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent"></div>
+        </div>
+        
+        <div *ngIf="!isLoading && siniflar.length === 0" class="p-4 text-center text-espresso/60">
+          Henüz sınıf eklenmemiş
+        </div>
+        
+        <div *ngIf="!isLoading && siniflar.length > 0" class="divide-y divide-borderGray">
+          <div 
+            *ngFor="let sinif of siniflar" 
+            class="p-4 hover:bg-gray-50 transition-colors"
+            [class.bg-blue-50]="seciliSinif?.id === sinif.id">
+            
+            <!-- Sınıf Düzenleme Formu -->
+            <div *ngIf="isEditingClass && seciliSinif?.id === sinif.id" class="space-y-3">
+              <input 
+                type="text" 
+                [(ngModel)]="editClassData.ad"
+                class="input input-bordered w-full"
+                maxlength="50">
+              <div class="flex gap-2">
+                <button 
+                  class="btn btn-primary btn-sm"
+                  (click)="updateClass()"
+                  [disabled]="!editClassData.ad.trim() || isLoading">
+                  Kaydet
+                </button>
+                <button 
+                  class="btn btn-ghost btn-sm"
+                  (click)="cancelEditingClass()">
+                  İptal
+                </button>
+              </div>
+            </div>
+            
+            <!-- Sınıf Görünümü -->
+            <div *ngIf="!isEditingClass || seciliSinif?.id !== sinif.id" class="flex items-center justify-between">
+              <div 
+                class="flex-1 cursor-pointer"
+                (click)="selectSinif(sinif)">
+                <h3 class="font-semibold text-espresso">{{ sinif.ad }}</h3>
+                <p class="text-sm text-espresso/60">{{ (sinif.dersler || []).length }} ders</p>
+              </div>
+              <div class="flex gap-1">
+                <button 
+                  class="btn btn-ghost btn-xs"
+                  (click)="startEditingClass(sinif)"
+                  title="Düzenle">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  </svg>
+                </button>
+                <button 
+                  class="btn btn-ghost btn-xs text-red-600"
+                  (click)="deleteClass(sinif)"
+                  title="Sil">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orta Panel: Dersler -->
+    <div class="lg:w-1/3 flex flex-col" *ngIf="seciliSinif">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-espresso">{{ seciliSinif.ad }} - Dersler</h2>
+        <button 
+          class="btn btn-primary btn-sm"
+          (click)="startAddingSubject()"
+          [disabled]="isAddingSubject">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Yeni Ders
+        </button>
+      </div>
+
+      <!-- Ders Ekleme Formu -->
+      <div *ngIf="isAddingSubject" class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+        <h3 class="text-sm font-semibold text-espresso mb-3">Yeni Ders Ekle</h3>
+        <div class="space-y-3">
+          <input 
+            type="text" 
+            [(ngModel)]="newSubjectData.ad"
+            placeholder="Ders adı (örn: Matematik)"
+            class="input input-bordered w-full"
+            maxlength="50">
+          <input 
+            type="text" 
+            [(ngModel)]="newSubjectData.ders_adi"
+            placeholder="Açıklama (opsiyonel)"
+            class="input input-bordered w-full"
+            maxlength="100">
+          <div class="flex gap-2">
+            <button 
+              class="btn btn-primary btn-sm"
+              (click)="addSubject()"
+              [disabled]="!newSubjectData.ad.trim() || isLoading">
+              Kaydet
+            </button>
+            <button 
+              class="btn btn-ghost btn-sm"
+              (click)="cancelAddingSubject()">
+              İptal
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ders Listesi -->
+      <div class="flex-1 overflow-auto border border-borderGray rounded-lg">
+        <div *ngIf="dersler.length === 0" class="p-4 text-center text-espresso/60">
+          Henüz ders eklenmemiş
+        </div>
+        
+        <div *ngIf="dersler.length > 0" class="divide-y divide-borderGray">
+          <div 
+            *ngFor="let ders of dersler" 
+            class="p-4 hover:bg-gray-50 transition-colors"
+            [class.bg-green-50]="seciliDers?.id === ders.id">
+            
+            <!-- Ders Düzenleme Formu -->
+            <div *ngIf="isEditingSubject && seciliDers?.id === ders.id" class="space-y-3">
+              <input 
+                type="text" 
+                [(ngModel)]="editSubjectData.ad"
+                class="input input-bordered w-full"
+                maxlength="50">
+              <input 
+                type="text" 
+                [(ngModel)]="editSubjectData.ders_adi"
+                class="input input-bordered w-full"
+                maxlength="100">
+              <div class="flex gap-2">
+                <button 
+                  class="btn btn-primary btn-sm"
+                  (click)="updateSubject()"
+                  [disabled]="!editSubjectData.ad.trim() || isLoading">
+                  Kaydet
+                </button>
+                <button 
+                  class="btn btn-ghost btn-sm"
+                  (click)="cancelEditingSubject()">
+                  İptal
+                </button>
+              </div>
+            </div>
+            
+            <!-- Ders Görünümü -->
+            <div *ngIf="!isEditingSubject || seciliDers?.id !== ders.id" class="flex items-center justify-between">
+              <div 
+                class="flex-1 cursor-pointer"
+                (click)="selectDers(ders)">
+                <h3 class="font-semibold text-espresso">{{ ders.ad }}</h3>
+                <p class="text-sm text-espresso/60" *ngIf="ders.ders_adi">{{ ders.ders_adi }}</p>
+              </div>
+              <div class="flex gap-1">
+                <button 
+                  class="btn btn-ghost btn-xs"
+                  (click)="startEditingSubject(ders)"
+                  title="Düzenle">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  </svg>
+                </button>
+                <button 
+                  class="btn btn-ghost btn-xs text-red-600"
+                  (click)="deleteSubject(ders)"
+                  title="Sil">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sağ Panel: Seçim Bilgisi -->
+    <div class="lg:w-1/3 flex flex-col" *ngIf="seciliSinif">
+      <div class="bg-gray-50 border border-borderGray rounded-lg p-4">
+        <h3 class="text-lg font-semibold text-espresso mb-4">Seçim Bilgisi</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <h4 class="text-sm font-medium text-espresso/70 mb-1">Seçilen Sınıf</h4>
+            <p class="text-espresso font-semibold">{{ seciliSinif.ad }}</p>
+          </div>
+          
+          <div *ngIf="seciliDers">
+            <h4 class="text-sm font-medium text-espresso/70 mb-1">Seçilen Ders</h4>
+            <p class="text-espresso font-semibold">{{ seciliDers.ad }}</p>
+            <p class="text-sm text-espresso/60" *ngIf="seciliDers.ders_adi">{{ seciliDers.ders_adi }}</p>
+          </div>
+          
+          <div *ngIf="!seciliDers">
+            <p class="text-sm text-espresso/60">Bir ders seçin</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sınıf Seçilmediğinde -->
+    <div class="lg:w-2/3 flex items-center justify-center" *ngIf="!seciliSinif">
+      <div class="text-center text-espresso/60">
+        <svg class="w-16 h-16 mx-auto mb-4 text-espresso/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 7h8"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 11h8"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 15h5"/>
+        </svg>
+        <p class="text-lg">Bir sınıf seçin</p>
+        <p class="text-sm">Dersleri görüntülemek ve yönetmek için</p>
+      </div>
+    </div>
+  </div>
+</div>
