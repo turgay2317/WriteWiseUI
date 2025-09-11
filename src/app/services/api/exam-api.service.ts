@@ -236,6 +236,67 @@ export class ExamApiService {
     });
   }
 
+  addSinif(sinifData: { ad: string }): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.post(`${this.baseUrl}/siniflar`, sinifData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
+  updateSinif(sinifId: number, sinifData: { ad: string }): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.put(`${this.baseUrl}/siniflar/${sinifId}`, sinifData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
+  deleteSinif(sinifId: number): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.delete(`${this.baseUrl}/siniflar/${sinifId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
+  // Ders CRUD işlemleri
+  addDers(dersData: { ad: string; ders_adi: string; sinif_id: number }): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.post(`${this.baseUrl}/dersler`, dersData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
+  updateDers(dersId: number, dersData: { ad: string; ders_adi: string }): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.put(`${this.baseUrl}/dersler/${dersId}`, dersData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
+  deleteDers(dersId: number): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.delete(`${this.baseUrl}/dersler/${dersId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+
   analyzeUpload(params: {
     file: File;
     rules: string;

@@ -116,13 +116,13 @@ export class ClassesSubjectsComponent implements OnInit, OnDestroy {
     this.examApiService.addSinif(this.newClassData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: (response: any) => {
           this.toastService.pushToast('success', response.message || 'Sınıf eklendi');
           this.isAddingClass = false;
           this.newClassData = { ad: '' };
           this.loadSiniflar();
         },
-        error: (error) => {
+        error: (error: any) => {
           this.toastService.pushToast('error', error.error?.error || 'Sınıf eklenirken hata oluştu');
           this.isLoading = false;
         }
@@ -151,13 +151,13 @@ export class ClassesSubjectsComponent implements OnInit, OnDestroy {
     this.examApiService.updateSinif(this.seciliSinif.id, this.editClassData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: (response: any) => {
           this.toastService.pushToast('success', response.message || 'Sınıf güncellendi');
           this.isEditingClass = false;
           this.editClassData = { ad: '' };
           this.loadSiniflar();
         },
-        error: (error) => {
+        error: (error: any) => {
           this.toastService.pushToast('error', error.error?.error || 'Sınıf güncellenirken hata oluştu');
           this.isLoading = false;
         }
@@ -170,14 +170,14 @@ export class ClassesSubjectsComponent implements OnInit, OnDestroy {
       this.examApiService.deleteSinif(sinif.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (response) => {
+          next: (response: any) => {
             this.toastService.pushToast('success', response.message || 'Sınıf silindi');
             this.seciliSinif = null;
             this.dersler = [];
             this.seciliDers = null;
             this.loadSiniflar();
           },
-          error: (error) => {
+          error: (error: any) => {
             this.toastService.pushToast('error', error.error?.error || 'Sınıf silinirken hata oluştu');
             this.isLoading = false;
           }
@@ -206,12 +206,32 @@ export class ClassesSubjectsComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.seciliSinif) {
+      this.toastService.pushToast('error', 'Önce bir sınıf seçin');
+      return;
+    }
+
     this.isLoading = true;
-    // TODO: API call to add subject
-    this.toastService.pushToast('success', 'Ders eklendi');
-    this.isAddingSubject = false;
-    this.newSubjectData = { ad: '', ders_adi: '' };
-    this.loadSiniflar();
+    const dersData = {
+      ad: this.newSubjectData.ad,
+      ders_adi: this.newSubjectData.ders_adi,
+      sinif_id: this.seciliSinif.id
+    };
+
+    this.examApiService.addDers(dersData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.toastService.pushToast('success', response.message || 'Ders eklendi');
+          this.isAddingSubject = false;
+          this.newSubjectData = { ad: '', ders_adi: '' };
+          this.loadSiniflar();
+        },
+        error: (error: any) => {
+          this.toastService.pushToast('error', error.error?.error || 'Ders eklenirken hata oluştu');
+          this.isLoading = false;
+        }
+      });
   }
 
   startEditingSubject(ders: Ders) {
@@ -230,20 +250,48 @@ export class ClassesSubjectsComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.seciliDers) {
+      this.toastService.pushToast('error', 'Düzenlenecek ders seçilmedi');
+      return;
+    }
+
     this.isLoading = true;
-    // TODO: API call to update subject
-    this.toastService.pushToast('success', 'Ders güncellendi');
-    this.isEditingSubject = false;
-    this.editSubjectData = { ad: '', ders_adi: '' };
-    this.loadSiniflar();
+    const dersData = {
+      ad: this.editSubjectData.ad,
+      ders_adi: this.editSubjectData.ders_adi
+    };
+
+    this.examApiService.updateDers(this.seciliDers.id, dersData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.toastService.pushToast('success', response.message || 'Ders güncellendi');
+          this.isEditingSubject = false;
+          this.editSubjectData = { ad: '', ders_adi: '' };
+          this.loadSiniflar();
+        },
+        error: (error: any) => {
+          this.toastService.pushToast('error', error.error?.error || 'Ders güncellenirken hata oluştu');
+          this.isLoading = false;
+        }
+      });
   }
 
   deleteSubject(ders: Ders) {
     if (confirm(`${ders.ad} dersini silmek istediğinizden emin misiniz?`)) {
       this.isLoading = true;
-      // TODO: API call to delete subject
-      this.toastService.pushToast('success', 'Ders silindi');
-      this.loadSiniflar();
+      this.examApiService.deleteDers(ders.id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.toastService.pushToast('success', response.message || 'Ders silindi');
+            this.loadSiniflar();
+          },
+          error: (error: any) => {
+            this.toastService.pushToast('error', error.error?.error || 'Ders silinirken hata oluştu');
+            this.isLoading = false;
+          }
+        });
     }
   }
 }

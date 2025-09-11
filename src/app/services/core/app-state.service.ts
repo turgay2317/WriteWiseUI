@@ -59,7 +59,9 @@ export class AppStateService {
     switch (key) {
       case 'ogrenciler': return 'origin-top-left';
       case 'sinif-ozet': return 'origin-top-right';
-      case 'sinav-yukle': return 'origin-bottom-left';
+      case 'sinav-yukle': return 'origin-center';
+      case 'siniflarim': return 'origin-bottom-left';
+      case 'siniflar-dersler': return 'origin-bottom-right';
       case 'yuklemeler': return 'origin-bottom-right';
       default: return 'origin-center';
     }
@@ -70,6 +72,8 @@ export class AppStateService {
     if (key === 'ogrenciler') return { ...base, top: '12px', left: '12px' };
     if (key === 'sinif-ozet') return { ...base, top: '12px', right: '12px' };
     if (key === 'sinav-yukle') return { ...base, bottom: '12px', left: '12px' };
+    if (key === 'siniflarim') return { ...base, bottom: '12px', left: '12px' };
+    if (key === 'siniflar-dersler') return { ...base, bottom: '12px', right: '12px' };
     return { ...base, bottom: '12px', right: '12px' };
   }
 }
