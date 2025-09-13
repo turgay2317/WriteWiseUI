@@ -424,7 +424,3 @@
   </div>
 </main>
 
-<!-- Toasts -->
-<div class="fixed bottom-4 right-4 space-y-2 z-50">
-  <div *ngFor="let t of toasts()" class="px-4 py-2 rounded-md text-sm text-white shadow-soft-card" [class.bg-success]="t.type==='success'" [class.bg-error]="t.type==='error'" [class.bg-info]="t.type==='info'">{{ t.text }}</div>
-</div>

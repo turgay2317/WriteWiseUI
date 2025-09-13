@@ -155,4 +155,45 @@ export class ClassSummaryComponent implements OnInit, OnDestroy {
     if (ihtimal < 40) return '#eab308';
     return '#ef4444';
   }
+
+  getPieChartStyle() {
+    if (!this.istatistikler) {
+      return {
+        width: '120px',
+        height: '120px',
+        borderRadius: '50%',
+        background: '#f3f4f6'
+      };
+    }
+    
+    const data = this.getPuanAraligiData();
+    const total = data.reduce((sum, item) => sum + item.count, 0);
+    
+    if (total === 0) {
+      return {
+        width: '120px',
+        height: '120px',
+        borderRadius: '50%',
+        background: '#f3f4f6'
+      };
+    }
+    
+    // Conic gradient oluştur
+    let currentAngle = 0;
+    const gradients = data.map(item => {
+      const percentage = (item.count / total) * 100;
+      const angle = (item.count / total) * 360;
+      
+      const gradient = `${item.color} ${currentAngle}deg ${currentAngle + angle}deg`;
+      currentAngle += angle;
+      return gradient;
+    }).join(', ');
+    
+    return {
+      width: '120px',
+      height: '120px',
+      borderRadius: '50%',
+      background: `conic-gradient(${gradients})`
+    };
+  }
 }

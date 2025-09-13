@@ -13,7 +13,7 @@ import { Subject, takeUntil } from 'rxjs';
   template: `
     <app-header 
       [panelTitle]="'Öğrenci Paneli'" 
-      [subtitle]="'Write Wise Eğitim Platformu'" 
+      [subtitle]="'WriteWise Eğitim Platformu'" 
       (logoutClick)="onLogout()"
     ></app-header>
 

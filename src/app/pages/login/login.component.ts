@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthApiService, TeacherLoginRequest, StudentLoginRequest } from '../../services/api/auth-api.service';
+import { ToastService } from '../../services/core/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -11,8 +12,10 @@ import { AuthApiService, TeacherLoginRequest, StudentLoginRequest } from '../../
   template: `
     <section class="register-hero">
       <div class="register-wrapper">
-        <img class="logo" src="assets/graduation-cap.svg" alt="Teknofest25" />
-        <h1 class="heading">{{ heading }}</h1>
+        <div class="text-center mb-6 mt-10">
+          <img class="logo mx-auto mb-4" src="assets/logo.png" alt="WriteWise" style="width: 200px; height: auto;" />
+          <h1 class="heading font-bold">{{ heading }}</h1>
+        </div>
 
         <div class="register-card login-card">
           <form (submit)="onSubmit($event)" class="form-grid login-grid">
@@ -105,7 +108,8 @@ export class LoginComponent {
   constructor(
     private router: Router, 
     private route: ActivatedRoute,
-    private authService: AuthApiService
+    private authService: AuthApiService,
+    private toastService: ToastService
   ) {
     this.route.queryParamMap.subscribe(params => {
       const role = params.get('role');
@@ -140,11 +144,14 @@ export class LoginComponent {
     this.authService.teacherLogin(credentials).subscribe({
       next: (response) => {
         this.isLoading = false;
+        this.toastService.showSuccess('Giriş başarılı! Hoş geldiniz.');
         this.router.navigate(['/dashboard']);
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error.error?.error || 'Giriş yapılırken bir hata oluştu';
+        const errorMessage = error.error?.error || 'Giriş yapılırken bir hata oluştu';
+        this.toastService.showError(errorMessage);
+        this.errorMessage = errorMessage;
       }
     });
   }
@@ -159,11 +166,14 @@ export class LoginComponent {
     this.authService.studentLogin(credentials).subscribe({
       next: (response) => {
         this.isLoading = false;
+        this.toastService.showSuccess('Giriş başarılı! Hoş geldiniz.');
         this.router.navigate(['/ogrenci']);
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = error.error?.error || 'Giriş yapılırken bir hata oluştu';
+        const errorMessage = error.error?.error || 'Giriş yapılırken bir hata oluştu';
+        this.toastService.showError(errorMessage);
+        this.errorMessage = errorMessage;
       }
     });
   }

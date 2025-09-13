@@ -22,6 +22,23 @@ export class ToastService {
     this.toastsSignal.update(toasts => toasts.filter(toast => toast.id !== id));
   }
 
+  // Generic toast methods
+  showSuccess(message: string) {
+    this.pushToast('success', message);
+  }
+
+  showError(message: string) {
+    this.pushToast('error', message);
+  }
+
+  showInfo(message: string) {
+    this.pushToast('info', message);
+  }
+
+  showWarning(message: string) {
+    this.pushToast('warning', message);
+  }
+
   // Specific toast actions
   startAnalysisSuccess() {
     this.pushToast('success', 'Sınav başarıyla yüklendi.');

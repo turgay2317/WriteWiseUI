@@ -14,21 +14,21 @@ export const routes: Routes = [
   { 
     path: '', 
     component: LandingComponent,
-    title: 'Write Wise  - Eğitim Teknolojilerinin Geleceği'
+    title: 'WriteWise - Eğitim Teknolojilerinin Geleceği'
   },
   
   // Öğretmen Dashboard
   { 
     path: 'dashboard', 
     component: DashboardComponent,
-    title: 'Öğretmen Paneli - Write Wise  '
+    title: 'Öğretmen Paneli - WriteWise'
   },
   
   // Fiyatlandırma sayfası
   { 
     path: 'pricing', 
     component: PricingComponent,
-    title: 'Fiyatlandırma - Write Wise  '
+    title: 'Fiyatlandırma - WriteWise'
   },
   
   
@@ -36,7 +36,7 @@ export const routes: Routes = [
   { 
     path: 'login', 
     component: LoginComponent,
-    title: 'Giriş Yap - Write Wise  '
+    title: 'Giriş Yap - WriteWise'
   },
 
   // Öğrenci portalı
@@ -50,35 +50,35 @@ export const routes: Routes = [
   {
     path: 'iletisim',
     component: ContactComponent,
-    title: 'İletişim - Write Wise'
+    title: 'İletişim - WriteWise'
   },
 
   // Dokümantasyon sayfası
   {
     path: 'dokumantasyon',
     component: DocsComponent,
-    title: 'Dokümantasyon - Write Wise'
+    title: 'Dokümantasyon - WriteWise'
   },
 
   // Özellikler sayfası
   {
     path: 'features',
     component: FeaturesComponent,
-    title: 'Özellikler - Write Wise  '
+    title: 'Özellikler - WriteWise'
   },
 
   // Soru analiz sayfası
   {
     path: 'sinav/:sinavId/soru/:soruNo',
     component: QuestionAnalysisComponent,
-    title: 'Soru Analizi - Write Wise'
+    title: 'Soru Analizi - WriteWise'
   },
   
   // Öğrenci Girişi (farazi - gelecekte implement edilecek)
   { 
     path: 'student-login', 
     component: LandingComponent, // Geçici olarak landing'e yönlendir
-    title: 'Öğrenci Girişi - Write Wise  '
+    title: 'Öğrenci Girişi - WriteWise'
   },
   
   // Bilinmeyen route'lar için ana sayfaya yönlendir

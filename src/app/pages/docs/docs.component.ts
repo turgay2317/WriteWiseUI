@@ -10,7 +10,7 @@ import { RouterModule } from '@angular/router';
     <main class="layout-container mx-auto max-w-6xl px-4 lg:px-8 py-8">
       <header class="mb-6 text-center">
         <h1 class="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-sage via-warmGreen to-sage bg-clip-text text-transparent">Dokümantasyon</h1>
-        <p class="text-sm text-mediumText mt-2">Write Wise platformunu hızlıca entegre edin ve en iyi uygulamaları keşfedin.</p>
+        <p class="text-sm text-mediumText mt-2">WriteWise platformunu hızlıca entegre edin ve en iyi uygulamaları keşfedin.</p>
       </header>
 
       <div class="grid gap-6 lg:grid-cols-[260px_1fr] items-start">
@@ -29,7 +29,7 @@ import { RouterModule } from '@angular/router';
         <section class="space-y-6">
           <article id="baslangic" class="card p-4 border border-borderGray bg-white">
             <h2 class="text-lg font-semibold text-espresso mb-2">Başlangıç</h2>
-            <p class="text-sm text-espresso/80">Write Wise; hızlı kurulum, sade arayüz ve güvenilir analizler sunar. Öğretmen ve öğrenci panelleri ile uçtan uca deneyim sağlar.</p>
+            <p class="text-sm text-espresso/80">WriteWise; hızlı kurulum, sade arayüz ve güvenilir analizler sunar. Öğretmen ve öğrenci panelleri ile uçtan uca deneyim sağlar.</p>
           </article>
 
           <article id="kurulum" class="card p-4 border border-borderGray bg-white">

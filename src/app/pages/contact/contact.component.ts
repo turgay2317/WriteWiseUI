@@ -24,7 +24,7 @@ import { RouterModule } from '@angular/router';
             </div>
             <h3 class="text-base font-semibold text-espresso">Adres</h3>
           </div>
-          <p class="text-sm text-espresso/80">Write Wise Teknoloji A.Ş.<br/>Mustafa Kemal Mah. 1234. Cad. No: 7/12<br/>Çankaya, Ankara 06510</p>
+          <p class="text-sm text-espresso/80">WriteWise Teknoloji A.Ş.<br/>Mustafa Kemal Mah. 1234. Cad. No: 7/12<br/>Çankaya, Ankara 06510</p>
         </div>
 
         <div class="card p-4 border border-borderGray bg-white">

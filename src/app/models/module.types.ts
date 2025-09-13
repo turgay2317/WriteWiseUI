@@ -4,7 +4,7 @@ export type ExamType = 'Çoktan Seçmeli' | 'Açık Uçlu' | 'Karma';
 
 export type UploadStatus = 'İşleniyor' | 'Tamamlandı';
 
-export type ToastType = 'success' | 'error' | 'info';
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
 export type UploadTab = 'ozet' | 'sorular';
 

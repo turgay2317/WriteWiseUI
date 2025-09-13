@@ -122,29 +122,7 @@ import { ModuleKey } from '../../models';
             </div>
           </div>
 
-          <!-- Sınıflarım Card -->
-          <div class="dashboard-card group relative overflow-hidden transition-all duration-300 hover:scale-[1.02]" 
-               (click)="expandCard('siniflarim')">
-            
-            <!-- Background Gradient -->
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-indigo-700/80"></div>
-            <div class="absolute inset-0 bg-gradient-to-br from-black/20 to-black/40 group-hover:from-black/10 group-hover:to-black/30 transition-all duration-300"></div>
-            
-            <!-- Content Overlay -->
-            <div class="relative z-10 p-6 h-full flex flex-col items-center justify-center text-white">
-              <div class="h-16 w-16 rounded-2xl bg-white/20 backdrop-blur-sm grid place-items-center text-white transition-all duration-300 group-hover:scale-110 group-hover:bg-white/30 mb-6">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                  <path d="M8 7h8"/>
-                  <path d="M8 11h8"/>
-                  <path d="M8 15h5"/>
-                </svg>
-              </div>
-              <h3 class="text-xl lg:text-2xl font-bold text-white">Sınıflarım</h3>
-            </div>
-          </div>
-
+         
           <!-- Sınıflar/Dersler Card -->
           <div class="dashboard-card group relative overflow-hidden transition-all duration-300 hover:scale-[1.02]" 
                (click)="expandCard('siniflar-dersler')">

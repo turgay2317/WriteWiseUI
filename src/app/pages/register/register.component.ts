@@ -10,8 +10,10 @@ import { Router } from '@angular/router';
   template: `
     <section class="register-hero">
       <div class="register-wrapper">
-        <img class="logo" src="assets/graduation-cap.svg" alt="Write Wise" />
-        <h1 class="heading">Kayıt Ol</h1>
+        <div class="text-center mb-6">
+          <img class="logo mx-auto mb-4" src="assets/logo.png" alt="WriteWise" style="width: 120px; height: auto;" />
+          <h1 class="heading font-bold">Kayıt Ol</h1>
+        </div>
 
         <div class="register-card">
           <form (submit)="onSubmit($event)" class="form-grid">

@@ -10,7 +10,7 @@ import { FooterComponent } from '../../components/shared/footer/footer.component
     <section class="features-hero">
       <div class="container">
         <h1 class="title">Özellikler</h1>
-        <p class="subtitle">Write Wise platformunun sunduğu yeteneklere yakından bakın.</p>
+        <p class="subtitle">WriteWise platformunun sunduğu yeteneklere yakından bakın.</p>
       </div>
     </section>
 

@@ -13,11 +13,8 @@ import { RouterModule } from '@angular/router';
           <div class="footer-brand">
             <div class="footer-logo">
               <div class="logo-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3 6 6 .9-4.5 4.3 1.1 6.3L12 16.9 6.4 19.5l1.1-6.3L3 8.9 9 8z"/>
-                </svg>
+                <img src="assets/logo.png" alt="WriteWise Logo" class="w-8 h-8 object-contain">
               </div>
-              <span>Write Wise</span>
             </div>
             <p>Doğal öğrenme deneyimi için tasarlanan akıllı eğitim araçları.</p>
           </div>
@@ -40,7 +37,7 @@ import { RouterModule } from '@angular/router';
         </div>
         
         <div class="footer-bottom">
-          <p>&copy; 2025 Write Wise. Tüm hakları saklıdır.</p>
+          <p>&copy; 2025 WriteWise. Tüm hakları saklıdır.</p>
         </div>
       </div>
     </footer>
