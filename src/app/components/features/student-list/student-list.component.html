@@ -391,7 +391,7 @@
       <!-- Kopya Analizi (eğer varsa) -->
       <div *ngIf="studentService.selectedExam()?.copyText" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
         <div class="text-sm text-red-600 font-medium mb-2">⚠️ Kopya Analizi</div>
-        <div class="text-sm text-red-700 whitespace-pre-line">{{ studentService.selectedExam()?.copyText }}</div>
+        <div class="text-sm text-red-700 whitespace-pre-line break-words overflow-wrap-anywhere max-h-32 overflow-y-auto">{{ studentService.selectedExam()?.copyText }}</div>
       </div>
     </div>
   </div>

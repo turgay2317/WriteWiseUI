@@ -8,16 +8,16 @@ export class StudentPortalService {
 
   // Student-specific exams
   private myExamsSignal = signal<ExamRow[]>([
-    { id: 'se1', date: '2025-01-12', subject: 'Türkçe', type: 'Açık Uçlu' as any, score: 82, copyProb: 6, maxScore: 100, averageScore: 75.5, copyText: '', totalQuestions: 10, ders_id: 1 },
-    { id: 'se2', date: '2024-12-03', subject: 'Matematik', type: 'Karma' as any, score: 74, copyProb: 10, maxScore: 100, averageScore: 68.2, copyText: '', totalQuestions: 10, ders_id: 2 },
-    { id: 'se3', date: '2024-11-20', subject: 'Fen', type: 'Çoktan Seçmeli' as any, score: 91, copyProb: 3, maxScore: 100, averageScore: 82.1, copyText: '', totalQuestions: 10, ders_id: 3 },
-    { id: 'se4', date: '2025-02-05', subject: 'Tarih', type: 'Açık Uçlu' as any, score: 68, copyProb: 8, maxScore: 100, averageScore: 72.3, copyText: '', totalQuestions: 10, ders_id: 4 },
-    { id: 'se5', date: '2025-02-18', subject: 'Coğrafya', type: 'Karma' as any, score: 77, copyProb: 5, maxScore: 100, averageScore: 71.8, copyText: '', totalQuestions: 10, ders_id: 5 },
-    { id: 'se6', date: '2025-03-01', subject: 'Fizik', type: 'Açık Uçlu' as any, score: 88, copyProb: 4, maxScore: 100, averageScore: 79.6, copyText: '', totalQuestions: 10, ders_id: 6 },
-    { id: 'se7', date: '2025-03-12', subject: 'Kimya', type: 'Çoktan Seçmeli' as any, score: 71, copyProb: 9, maxScore: 100, averageScore: 65.4, copyText: '', totalQuestions: 10, ders_id: 7 },
-    { id: 'se8', date: '2025-03-25', subject: 'Biyoloji', type: 'Karma' as any, score: 79, copyProb: 7, maxScore: 100, averageScore: 73.9, copyText: '', totalQuestions: 10, ders_id: 8 },
-    { id: 'se9', date: '2025-04-10', subject: 'Edebiyat', type: 'Açık Uçlu' as any, score: 85, copyProb: 6, maxScore: 100, averageScore: 78.2, copyText: '', totalQuestions: 10, ders_id: 9 },
-    { id: 'se10', date: '2025-04-22', subject: 'İngilizce', type: 'Çoktan Seçmeli' as any, score: 90, copyProb: 2, maxScore: 100, averageScore: 84.7, copyText: '', totalQuestions: 10, ders_id: 10 },
+    { id: 'se1', date: '2025-01-12', subject: 'Türkçe', type: 'Açık Uçlu' as any, score: 82, copyProb: 6, maxScore: 100, averageScore: 0, copyText: '', totalQuestions: 10, ders_id: 1 },
+    { id: 'se2', date: '2024-12-03', subject: 'Matematik', type: 'Karma' as any, score: 74, copyProb: 10, maxScore: 100, averageScore: 0, copyText: '', totalQuestions: 10, ders_id: 2 },
+    { id: 'se3', date: '2024-11-20', subject: 'Fen', type: 'Çoktan Seçmeli' as any, score: 91, copyProb: 3, maxScore: 100, averageScore: 0, copyText: '', totalQuestions: 10, ders_id: 3 },
+    { id: 'se4', date: '2025-02-05', subject: 'Tarih', type: 'Açık Uçlu' as any, score: 68, copyProb: 8, maxScore: 100, averageScore: 0, copyText: '', totalQuestions: 10, ders_id: 4 },
+    { id: 'se5', date: '2025-02-18', subject: 'Coğrafya', type: 'Karma' as any, score: 77, copyProb: 5, maxScore: 100, averageScore: 0, copyText: '', totalQuestions: 10, ders_id: 5 },
+    { id: 'se6', date: '2025-03-01', subject: 'Fizik', type: 'Açık Uçlu' as any, score: 88, copyProb: 4, maxScore: 100, averageScore: 0, copyText: '', totalQuestions: 10, ders_id: 6 },
+    { id: 'se7', date: '2025-03-12', subject: 'Kimya', type: 'Çoktan Seçmeli' as any, score: 71, copyProb: 9, maxScore: 100, averageScore: 0, copyText: '', totalQuestions: 10, ders_id: 7 },
+    { id: 'se8', date: '2025-03-25', subject: 'Biyoloji', type: 'Karma' as any, score: 79, copyProb: 7, maxScore: 100, averageScore: 0, copyText: '', totalQuestions: 10, ders_id: 8 },
+    { id: 'se9', date: '2025-04-10', subject: 'Edebiyat', type: 'Açık Uçlu' as any, score: 85, copyProb: 6, maxScore: 100, averageScore: 0, copyText: '', totalQuestions: 10, ders_id: 9 },
+    { id: 'se10', date: '2025-04-22', subject: 'İngilizce', type: 'Çoktan Seçmeli' as any, score: 90, copyProb: 2, maxScore: 100, averageScore: 0, copyText: '', totalQuestions: 10, ders_id: 10 },
   ]);
 
   // Map exam -> per-question feedback (mock)
@@ -128,7 +128,14 @@ export class StudentPortalService {
   private activeSectionSignal = signal<'sinavlarim' | 'sonuclarim' | 'geri-bildirimlerim'>('sinavlarim');
 
   // Computed
-  public myExams = computed(() => this.myExamsSignal());
+  public myExams = computed(() => {
+    const exams = this.myExamsSignal();
+    // Her sınav için ortalama puanı hesapla
+    return exams.map(exam => ({
+      ...exam,
+      averageScore: this.calculateAverageScore(exam.id)
+    }));
+  });
   public selectedExam = computed(() => this.selectedExamSignal());
   public selectedExamQuestions = computed(() => {
     const sel = this.selectedExamSignal();
@@ -144,6 +151,20 @@ export class StudentPortalService {
 
   setActiveSection(section: 'sinavlarim' | 'sonuclarim' | 'geri-bildirimlerim') {
     this.activeSectionSignal.set(section);
+  }
+
+  // Ortalama puan hesaplama fonksiyonu
+  private calculateAverageScore(examId: string): number {
+    const questions = this.examQuestionsMap[examId] || [];
+    if (questions.length === 0) return 0;
+    
+    const totalScore = questions.reduce((sum, q) => sum + (q.llmScore || 0), 0);
+    const maxPossibleScore = questions.reduce((sum, q) => sum + (q.maxScore || 0), 0);
+    
+    if (maxPossibleScore === 0) return 0;
+    
+    // Yüzde olarak hesapla ve 100 üzerinden döndür
+    return Math.round((totalScore / maxPossibleScore) * 100 * 10) / 10;
   }
 }
 
