@@ -46,6 +46,7 @@ export class QuestionAnalysisComponent implements OnInit, OnDestroy {
   soruNo: number = 1;
   soru: Soru | null = null;
   sonrakiSoruId: number | null = null;
+  currentCevapIndex: number = 0;
   isLoading = false;
   errorMessage = '';
   
@@ -102,6 +103,14 @@ export class QuestionAnalysisComponent implements OnInit, OnDestroy {
           this.sonrakiSoruId = response.sonraki_soru_id;
           this.isLoading = false;
           
+          // Debug: Veri yapısını kontrol et
+          console.log('Soru yüklendi:', this.soru);
+          console.log('Cevap grupları:', this.soru?.cevaplar);
+          if (this.soru?.cevaplar && this.soru.cevaplar.length > 0) {
+            console.log('İlk cevap grubu:', this.soru?.cevaplar?.[0]);
+            console.log('İlk cevap grubu analizleri:', this.soru?.cevaplar?.[0]?.analizler);
+          }
+          
           // Puan düzenleme için başlangıç değerlerini ayarla
           this.initializePuanEditing();
         },
@@ -133,12 +142,22 @@ export class QuestionAnalysisComponent implements OnInit, OnDestroy {
     }
   }
 
+  goBack() {
+    this.router.navigate(['/dashboard']);
+  }
+
+  getFirstEditingKey(): string {
+    const keys = Object.keys(this.editingDegerlendirme);
+    return keys.length > 0 ? keys[0] : '';
+  }
+
   updatePuan(cevapId: number, yeniPuan: number) {
     if (!this.soru) return;
     
     this.updatingPuan[cevapId] = true;
     
-    this.examApiService.updateCevapPuan(this.soru.id, cevapId, yeniPuan)
+    // Grup ID'si ile puan güncelleme (cevapId artık grup ID'si)
+    this.examApiService.updateGrupPuan(this.soru.id, cevapId, yeniPuan)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -244,9 +263,32 @@ export class QuestionAnalysisComponent implements OnInit, OnDestroy {
     return this.editingDegerlendirme.hasOwnProperty(analizId);
   }
 
+  hasEditingDegerlendirme(): boolean {
+    return Object.keys(this.editingDegerlendirme).length > 0;
+  }
+
   getTotalStudentAnswers(): number {
     if (!this.soru) return 0;
     return this.soru.cevaplar.reduce((sum, c) => sum + c.analizler.length, 0);
+  }
+
+  getCurrentCevap(): CevapGrubu | null {
+    if (!this.soru || !this.soru.cevaplar.length || this.currentCevapIndex < 0 || this.currentCevapIndex >= this.soru.cevaplar.length) {
+      return null;
+    }
+    return this.soru.cevaplar[this.currentCevapIndex];
+  }
+
+  prevCevap() {
+    if (this.currentCevapIndex > 0) {
+      this.currentCevapIndex--;
+    }
+  }
+
+  nextCevap() {
+    if (this.soru && this.currentCevapIndex < this.soru.cevaplar.length - 1) {
+      this.currentCevapIndex++;
+    }
   }
 
   goToDashboard() {

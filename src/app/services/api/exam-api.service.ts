@@ -202,6 +202,19 @@ export class ExamApiService {
     );
   }
 
+  updateGrupPuan(soruId: number, grupId: number, puan: number): Observable<any> {
+    const token = localStorage.getItem('jwt_token');
+    return this.http.put(`${this.baseUrl}/soru/${soruId}/grup/${grupId}/puan`, 
+      { puan: puan }, 
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+  }
+
   updateAnalizDegerlendirme(analizId: number, pozitif: string, negatif: string): Observable<any> {
     const token = localStorage.getItem('jwt_token');
     return this.http.put(`${this.baseUrl}/analiz/${analizId}/degerlendirme`, 
